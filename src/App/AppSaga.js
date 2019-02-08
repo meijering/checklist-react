@@ -1,16 +1,42 @@
-import { put, takeLatest, call } from 'redux-saga/effects';
+import { put, takeLatest, call, all } from 'redux-saga/effects';
 
-import { GET_USER } from './AppConstants';
-import { doLogin, doLogout, getGroups } from '../utils/APICalls';
+import { REGISTER, GET_USER, LOGOUT, SAVE_ANSWER } from './AppConstants';
+import { doLogin, doLogout, getGroups, doRegister, doSaveAnswer } from '../utils/APICalls';
 import {
   userLoggedIn,
   userLoggedInError,
   userLoggedOut,
   userLoggedOutError,
+  registered,
+  registerError,
+  answerSaved,
 } from './AppActions';
 
 /**
- * function to log in and load the user.
+ * function to log in, load the user and questions.
+ */
+export function* registerVisitor(action) {
+  try {
+    const registerData = yield call(doRegister, action.credentials);
+    yield put(registered(registerData));
+  } catch (error) {
+    yield put(registerError(error));
+  }
+}
+
+/**
+ * function to log in, load the user and questions.
+ */
+export function* saveAnswer(action) {
+  try {
+    const answerData = yield call(doSaveAnswer, action.question, action.answer);
+    yield put(answerSaved(answerData));
+  } catch (error) {
+    // yield put(registerError(error));
+  }
+}
+/**
+ * function to log in, load the user and questions.
  */
 export function* loginUser(action) {
   try {
@@ -22,9 +48,8 @@ export function* loginUser(action) {
   }
 }
 
-
 /**
- * function to log in and load the user.
+ * function to log out and unload the user and questions.
  */
 export function* logoutUser() {
   try {
@@ -36,9 +61,14 @@ export function* logoutUser() {
 }
 
 /**
- * The application will keep listening to the latest call on GET_CURRENT_PRODUCTS
+ * The application will keep listening to the latest call on GET_USER
  * to fetch the products
  */
 export default function* AppListener() {
-  yield takeLatest(GET_USER, loginUser);
+  yield all([
+    yield takeLatest(REGISTER, registerVisitor),
+    yield takeLatest(GET_USER, loginUser),
+    yield takeLatest(SAVE_ANSWER, saveAnswer),
+    yield takeLatest(LOGOUT, logoutUser),
+  ]);
 }

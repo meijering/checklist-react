@@ -4,12 +4,12 @@ import styled from 'styled-components';
 import { Progress } from 'react-sweet-progress';
 import AnimateHeight from 'react-animate-height';
 import ChevronLeft from '@material-ui/icons/ChevronLeft';
+import { media } from '../utils/media';
 
 export const Group = styled.div`
   box-shadow: 1px 2px 5px #8bc34a;
   border-radius: 8px;
-  padding: 10px;
-  width:100%;
+  padding: 12px 12px 6px 12px;
   max-width: 1000px;
   margin: 10px auto;
   background-color: #f0f7e6;
@@ -95,7 +95,12 @@ export const Group = styled.div`
   .react-sweet-progress-circle path {
     stroke-linecap: round;
   }
+
+  ${media.phone`
+    border-radius: 0px;
+  `}
 `;
+
 export const GroupBar = styled.div`
   display: flex;
   flex-direction: row;
@@ -128,10 +133,10 @@ export const Div = styled.div`
 `;
 export const QuestionContainer = styled(AnimateHeight)`
   max-width: 1000px;
-  margin: 10px auto;
   background-color: #fdfdfd;
   text-align: left;
- `;
+  margin: 6px auto;
+`;
 export const Name = styled.span`
   font-weight: bold;
   font-size: 18px;

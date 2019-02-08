@@ -62,7 +62,7 @@ module.exports = (env, options = {}) => ({
     new webpack.DefinePlugin({ 'process.env.MODE': JSON.stringify(env.MODE) }),
     new webpack.HotModuleReplacementPlugin(),
     new HtmlWebpackPlugin({
-      template: './public/index.html',
+      template: './src/index.html',
       filename: 'index.html',
       inject: 'body',
     }),

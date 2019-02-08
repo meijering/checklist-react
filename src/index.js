@@ -4,7 +4,6 @@ import ReactDOM from 'react-dom';
 import { Provider } from 'react-redux';
 import createHistory from 'history/createBrowserHistory';
 import { ConnectedRouter } from 'connected-react-router/immutable';
-// import { ThemeProvider } from 'styled-components';
 import { MuiThemeProvider, createMuiTheme } from '@material-ui/core/styles';
 import configureStore from './configureStore';
 import App from './App/App'; // eslint-disable-line import/no-named-as-default
@@ -25,9 +24,20 @@ const breakpointValues = {
   lg: 992,
   xl: 1200,
 };
+
 const gridAdjustments = createMuiTheme({
   breakpoints: { values: breakpointValues },
   spacing: { unit: 15 },
+  palette: {
+    primary: {
+      main: '#008025',
+    },
+    secondary: {
+      main: '#ffab40',
+    },
+    // error: will use the default color
+  },
+
 });
 const MOUNT_NODE = document.getElementById('root');
 ReactDOM.render(

@@ -1,14 +1,16 @@
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import GroupItem from './GroupItem';
+import Question from './Question';
 
 class Groups extends PureComponent {
   static propTypes = {
     groups: PropTypes.arrayOf(PropTypes.shape()).isRequired,
+    saveAnswer: PropTypes.func.isRequired,
   }
 
   render() {
-    const { groups } = this.props;
+    const { groups, saveAnswer } = this.props;
     return groups.filter(group => group.thema === 1).map((group) => {
       const checkQuestions = group.questions.filter(q => q.type === 'checkbox');
       const nmbrOfQuestions = checkQuestions.length;
@@ -21,7 +23,9 @@ class Groups extends PureComponent {
           nmbrOfQuestions={nmbrOfQuestions}
           nmbrOfAnswers={nmbrOfAnswers}
         >
-          {group.questions.map(question => <div key={question.vraag_id}>{question.vraag}</div>)}
+          {group.questions.sort((a, b) => a.rang - b.rang).map(question =>
+            <Question key={question.vraag_id} question={question} saveAnswer={saveAnswer} />)
+          }
         </GroupItem>
       );
     });

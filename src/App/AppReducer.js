@@ -7,7 +7,7 @@
 
 import { fromJS } from 'immutable';
 
-import { GET_USER, GET_USER_SUCCEED, LOGOUT, LOGOUT_SUCCEED, LOGOUT_ERROR } from './AppConstants';
+import { GET_USER, GET_USER_SUCCEED, LOGOUT, LOGOUT_SUCCEED, LOGOUT_ERROR, SAVE_ANSWER, SAVE_ANSWER_SUCCEED, SAVE_ANSWER_ERROR } from './AppConstants';
 
 // The initial state of the App
 const initialState = fromJS({
@@ -26,6 +26,7 @@ function appReducer(state = initialState, action = {}) {
     case GET_USER:
       return state.set('loggedIn', false);
 
+    case SAVE_ANSWER:
     case LOGOUT:
       return state;
 
@@ -37,6 +38,10 @@ function appReducer(state = initialState, action = {}) {
         .set('loggedIn', true);
     }
 
+    case SAVE_ANSWER_SUCCEED: {
+      return state
+        .set('groups', action.answer.data);
+    }
     // store the results of the action when succeeded.
     case LOGOUT_SUCCEED: {
       return state
@@ -54,6 +59,7 @@ function appReducer(state = initialState, action = {}) {
 
     // For now don't do anything when the action returns with an error
     // case GET_GROUPS_ERROR:
+    case SAVE_ANSWER_ERROR:
     case LOGOUT_ERROR:
       return state;
 

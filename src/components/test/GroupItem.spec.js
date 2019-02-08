@@ -3,19 +3,19 @@ import React from 'react';
 import { configure, mount } from 'enzyme';
 import Adapter from 'enzyme-adapter-react-16';
 import { Progress } from 'react-sweet-progress';
-configure({ adapter: new Adapter() });
-
 import GroupItem, { GroupBar, Name, Nmbr, QuestionContainer } from '../GroupItem';
+
+configure({ adapter: new Adapter() });
 
 describe('GroupItem', () => {
   let group;
-  let groupProps = {
+  const groupProps = {
     name: 'Title of Group',
     nmbrOfQuestions: 5,
     nmbrOfAnswers: 2,
     toggleQuestions: () => {},
+  };
 
-  }
   beforeEach(() => {
     group = mount(<GroupItem {...groupProps}><div>1</div><div>2</div><div>3</div></GroupItem>);
   });
@@ -29,7 +29,8 @@ describe('GroupItem', () => {
   });
 
   test('should show the percentage of answerred questions', () => {
-    expect(group.find(Progress).get(0).props.percent).toEqual(groupProps.nmbrOfAnswers/groupProps.nmbrOfQuestions*100);
+    expect(group.find(Progress).get(0).props.percent)
+      .toEqual((groupProps.nmbrOfAnswers / groupProps.nmbrOfQuestions) * 100);
   });
 
   test('should contain the questions', () => {
@@ -45,5 +46,4 @@ describe('GroupItem', () => {
     group.update();
     expect(group.find(QuestionContainer).get(0).props.height).toBe('auto');
   });
-
 });
