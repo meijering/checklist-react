@@ -7,7 +7,10 @@
 
 import { fromJS } from 'immutable';
 
-import { GET_USER, GET_USER_SUCCEED, LOGOUT, LOGOUT_SUCCEED, LOGOUT_ERROR, SAVE_ANSWER, SAVE_ANSWER_SUCCEED, SAVE_ANSWER_ERROR } from './AppConstants';
+import {
+  GET_USER, GET_USER_SUCCEED, LOGOUT, LOGOUT_SUCCEED, LOGOUT_ERROR, SAVE_ANSWER,
+  SAVE_ANSWER_SUCCEED, SAVE_ANSWER_ERROR,
+} from './AppConstants';
 
 // The initial state of the App
 const initialState = fromJS({
@@ -39,8 +42,26 @@ function appReducer(state = initialState, action = {}) {
     }
 
     case SAVE_ANSWER_SUCCEED: {
+      const oldGroups = state.get('groups');
+      const newGroups = action.answer.data.map((group) => {
+        const oldGroup = oldGroups.find(og => og.groep_id === group.groep_id);
+        return (
+          {
+            ...oldGroup,
+            questions: group.questions.map((question) => {
+              const oldQuestion = oldGroup.questions.find(oq => oq.vraag_id === question.vraag_id);
+              return (
+                {
+                  ...oldQuestion,
+                  answers: question.answers,
+                }
+              );
+            }),
+          }
+        );
+      });
       return state
-        .set('groups', action.answer.data);
+        .set('groups', newGroups);
     }
     // store the results of the action when succeeded.
     case LOGOUT_SUCCEED: {

@@ -9,11 +9,10 @@ import { DAEMON, ONCE_TILL_UNMOUNT, RESTART_ON_REMOUNT } from './constants';
 
 const allowedModes = [RESTART_ON_REMOUNT, DAEMON, ONCE_TILL_UNMOUNT];
 
-const checkKey = key =>
-  invariant(
-    isString(key) && !isEmpty(key),
-    '(app/utils...) injectSaga: Expected `key` to be a non empty string',
-  );
+const checkKey = key => invariant(
+  isString(key) && !isEmpty(key),
+  '(app/utils...) injectSaga: Expected `key` to be a non empty string',
+);
 
 const checkDescriptor = (descriptor) => {
   const shape = {
@@ -51,8 +50,7 @@ export function injectSagaFactory(store, isValid) {
     }
 
     if (
-      !hasSaga ||
-      (hasSaga && mode !== DAEMON && mode !== ONCE_TILL_UNMOUNT)
+      !hasSaga || (hasSaga && mode !== DAEMON && mode !== ONCE_TILL_UNMOUNT)
     ) {
       store.injectedSagas[key] = { // eslint-disable-line no-param-reassign
         ...newDescriptor,
@@ -84,7 +82,6 @@ export function ejectSagaFactory(store, isValid) {
 
 export default function getInjectors(store) {
   checkStore(store);
-
   return {
     injectSaga: injectSagaFactory(store, true),
     ejectSaga: ejectSagaFactory(store, true),

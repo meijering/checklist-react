@@ -150,8 +150,17 @@ export default class GroupItem extends React.PureComponent {
   state = {
     questionsToggled: true,
   }
-  toggleQuestions = () =>
-    this.setState(prevState => ({ questionsToggled: !prevState.questionsToggled }));
+
+  toggleQuestions = () => {
+    const { id, toggleActive } = this.props;
+    this.setState(
+      prevState => ({ questionsToggled: !prevState.questionsToggled }),
+      () => {
+        const { questionsToggled } = this.state;
+        toggleActive(id, !questionsToggled);
+      },
+    );
+  }
 
   render() {
     const {
@@ -172,7 +181,7 @@ export default class GroupItem extends React.PureComponent {
               percent={parseInt((nmbrOfAnswers / nmbrOfQuestions) * 100, 10)}
             />
             <Name>{name}</Name>
-            <Nmbr>({nmbrOfQuestions})</Nmbr>
+            <Nmbr>{`(${nmbrOfQuestions})`}</Nmbr>
           </Div>
           <Button className={questionsToggled ? 'closed' : 'opened'} />
         </GroupBar>
@@ -189,9 +198,11 @@ export default class GroupItem extends React.PureComponent {
 }
 
 GroupItem.propTypes = {
+  id: PropTypes.string.isRequired,
   name: PropTypes.string.isRequired,
   nmbrOfQuestions: PropTypes.number.isRequired,
   nmbrOfAnswers: PropTypes.number.isRequired,
+  toggleActive: PropTypes.func.isRequired,
   children: PropTypes.oneOfType([
     PropTypes.arrayOf(PropTypes.node),
     PropTypes.node,

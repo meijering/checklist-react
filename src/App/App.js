@@ -65,8 +65,9 @@ class AppImpl extends React.PureComponent {
       <div className="App">
         <AppBar user={user} loggedIn={loggedIn} logoutUser={logoutUser} />
 
-        {loggedIn ?
-          <Groups groups={groups} saveAnswer={saveAnswer} /> :
+        {loggedIn
+          ? <Groups groups={groups} saveAnswer={saveAnswer} />
+          : (
           <Content>
             <img src={imageElement} alt="logo" />
             <h3>Checklist Duurzame kinderopvang</h3>
@@ -81,7 +82,9 @@ class AppImpl extends React.PureComponent {
               Dat doet hij met deze checklist. Bent u geïnteresseerd in de mogelijkheden voor uw
               specifieke situatie of locatie? Heeft u vragen, opmerkingen of zelf een duurzame tip?
               Neem dan contact op met Ilse Vlaming, initiatiefnemer van de Groene Giraf:
-              <a href="tel:06 41 848 766">06 41 848 766</a> of <a href="mailto:info@degroenegiraf.nl">info@degroenegiraf.nl</a>
+              <a href="tel:06 41 848 766">06 41 848 766</a>
+              of
+              <a href="mailto:info@degroenegiraf.nl">info@degroenegiraf.nl</a>
             </p>
             <Login
               loginUser={loginUser}
@@ -90,7 +93,8 @@ class AppImpl extends React.PureComponent {
               user={user}
               loggedIn={loggedIn}
             />
-          </Content>}
+          </Content>
+          )}
       </div>
     );
   }
@@ -112,7 +116,6 @@ const withReducer = injectReducer({ key: 'theApp', reducer });
 const withSaga = injectSaga({ key: 'theApp', saga });
 
 export default compose(
-  // withRouter,
   withReducer,
   withSaga,
   withConnect,

@@ -1,17 +1,15 @@
 /**
  * Test injectors
  */
-import { createHashHistory } from 'history';
-// import { memoryHistory } from 'react-router-dom';
 import { configure, shallow } from 'enzyme';
 import React from 'react';
 import Adapter from 'enzyme-adapter-react-16';
-configure({ adapter: new Adapter() });
 import identity from 'lodash/identity';
 import configureStore from '../../configureStore';
 import injectReducer from '../injectReducer';
 import * as reducerInjectors from '../reducerInjectors';
 
+configure({ adapter: new Adapter() });
 // Fixtures
 const Component = () => null;
 
@@ -23,7 +21,7 @@ describe('injectReducer decorator', () => {
   let ComponentWithReducer;
 
   beforeEach(() => {
-    store = configureStore({}, createHashHistory);
+    store = configureStore({});
     injectors = {
       injectReducer: jest.fn(),
     };

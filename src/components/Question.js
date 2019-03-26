@@ -2,57 +2,58 @@ import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import styled from 'styled-components';
 import Checkbox from '@material-ui/core/Checkbox';
-import { withStyles } from '@material-ui/core/styles';
-import { TextField, IconButton } from '@material-ui/core';
-import { MoreVert } from '@material-ui/icons';
+import { TextField } from '@material-ui/core';
 import { Icon } from 'react-icons-kit';
 /* eslint-disable camelcase */
 import { ic_lightbulb_outline } from 'react-icons-kit/md/ic_lightbulb_outline';
 import { ic_comment } from 'react-icons-kit/md/ic_comment';
 /* eslint-enable camelcase */
 import AnimateHeight from 'react-animate-height';
+import { media } from '../utils/media';
+import Remarks from './Remarks';
+
 
 const Bar = styled.div`
-    display: flex;
-    flex-direction: row;
-    align-items: flex-start;
-    padding: 6px 0;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  padding: 6px 0;
+  height: 40px;
+  ${media.phone`
+    height: auto;
+  `}
 `;
 
-const Dots = withStyles({
-  root: {
-    padding: '1px',
-    marginLeft: '8px',
-  },
-})(IconButton);
-
-const Check = withStyles({
-  root: {
-    flex: '0 0 auto',
-    height: 'auto',
-    padding: '0',
-    marginRight: '12px',
-    marginLeft: '2px',
-  },
-})(Checkbox);
+const Check = styled(Checkbox)`
+  flex: 0 0 auto;
+  padding: 0;
+  margin-right: 12px;
+  margin-left: 2px;
+  & svg {
+    height: 1.5em;
+    width: 1.5em;
+    fill: #008025;
+  }
+`;
 
 const QuestionBox = styled.div`
   padding-right: 6px;
   line-height: 24px;
 `;
+
 export const QuestionInfo = styled(AnimateHeight)`
+  ${media.phone`
+    display: none;
+  `}
 `;
 
 const InfoContainer = styled.div`
   display: flex;
   flex-direction: row;
+  min-height: 60vh;
 `;
 
 const Tip = styled.div`
-  margin-bottom: 5px;
-`;
-
-const Remark = styled.div`
   margin-bottom: 5px;
 `;
 
@@ -70,12 +71,17 @@ class Question extends PureComponent {
   static propTypes = {
     question: PropTypes.shape().isRequired,
     saveAnswer: PropTypes.func.isRequired,
+    showDetail: PropTypes.bool,
   }
+
+  static defaultProps = {
+    showDetail: false,
+  }
+
   constructor(props) {
     super(props);
     this.state = {
       more: this.setLastAnswer(),
-      showDetail: false,
     };
   }
 
@@ -83,43 +89,48 @@ class Question extends PureComponent {
     this.setState({ more: e.target.value });
   };
 
-  getLastAnswer = () => (this.props.question.answers ?
-    this.props.question.answers.sort((a, b) => new Date(b.ingevoerd_op) - new Date(a.ingevoerd_op))
-      .map(a => a.antwoord)[0] === '1' : false);
+  getLastAnswer = () => {
+    const { question } = this.props;
+    return (question.answers
+      ? question.answers.sort((a, b) => new Date(b.ingevoerd_op) - new Date(a.ingevoerd_op))
+        .map(a => a.antwoord)[0] === '1' : false);
+  }
 
-  setLastAnswer = () => (this.props.question.answers ?
-    this.props.question.answers.sort((a, b) => new Date(b.ingevoerd_op) - new Date(a.ingevoerd_op))
-      .map(a => a.antwoord)[0] : '');
+  setLastAnswer = () => {
+    const { question } = this.props;
+    return (question.answers
+      ? question.answers.sort((a, b) => new Date(b.ingevoerd_op) - new Date(a.ingevoerd_op))
+        .map(a => a.antwoord)[0] : '');
+  }
 
-  saveCheck = () => this.props.saveAnswer(this.props.question.vraag_id, this.getLastAnswer() ? '' : '1');
+  saveCheck = () => {
+    const { question, saveAnswer } = this.props;
+    saveAnswer(question.vraag_id, this.getLastAnswer() ? '' : '1');
+  }
 
   saveThis = () => {
-    if (this.state.more !== this.setLastAnswer()) {
-      this.props.saveAnswer(this.props.question.vraag_id, this.state.more);
+    const { question, saveAnswer } = this.props;
+    const { more } = this.state;
+    if (more !== this.setLastAnswer()) {
+      saveAnswer(question.vraag_id, more);
     }
   }
 
-  toggleTips = () => {
-    this.setState(prevState => ({ showDetail: !prevState.showDetail }));
-  }
   /* eslint-disable camelcase */
   render() {
-    const { question } = this.props;
-    const { more, showDetail } = this.state;
+    const { question, showDetail } = this.props;
+    const { more } = this.state;
     return (
       <React.Fragment>
         <Bar>
-        {question.type === 'checkbox' &&
-        <React.Fragment>
-          <Dots aria-label="meer..." onClick={this.toggleTips}>
-            <MoreVert />
-          </Dots>
-          <Check checked={this.getLastAnswer()} onChange={this.saveCheck} value="1" />
-        </React.Fragment>
-        }
+        {question.type === 'checkbox' && (
+          <React.Fragment>
+            <Check checked={this.getLastAnswer()} onChange={() => this.saveCheck()} value="1" />
+          </React.Fragment>
+        )}
         <QuestionBox>{question.vraag}</QuestionBox>
         </Bar>
-        {(question.tips || question.remarks) &&
+        {(question.tips || question.remarks) && (
           <QuestionInfo
             duration={300}
             animateOpacity
@@ -132,14 +143,14 @@ class Question extends PureComponent {
               </Navigator>
               <InfoContent>
                 {question.tips.map(tip => <Tip key={`tip-${tip.tip_id}`} dangerouslySetInnerHTML={{ __html: tip.tip }} />)}
-                {question.remarks.map(remark => <Remark key={`remark-${remark.opmerking_id}`}>{remark.opmerking}</Remark>)}
+                <Remarks remarks={question.remarks} />
               </InfoContent>
             </InfoContainer>
           </QuestionInfo>
-        }
-        {question.type !== 'checkbox' &&
+        )}
+        {question.type !== 'checkbox' && (
           <TextField rows="4" multiline fullWidth value={more} onChange={this.onChange} onBlur={this.saveThis} variant="outlined" />
-        }
+        )}
       </React.Fragment>
     );
   }

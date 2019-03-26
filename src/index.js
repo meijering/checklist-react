@@ -2,20 +2,16 @@ import '@babel/polyfill';
 import React from 'react';
 import ReactDOM from 'react-dom';
 import { Provider } from 'react-redux';
-import createHistory from 'history/createBrowserHistory';
-import { ConnectedRouter } from 'connected-react-router/immutable';
 import { MuiThemeProvider, createMuiTheme } from '@material-ui/core/styles';
 import configureStore from './configureStore';
 import App from './App/App'; // eslint-disable-line import/no-named-as-default
+import StoreContext from './utils/storeContext';
 
-/* eslint-disable no-console */
-// import('@vfz/vfz-core-eshop-components/build/styles/global-styles-ziggo')
-//   .then(() => console.log('Styles were loaded'));
-/* eslint-enable no-console */
+
+// The initial state of the App
 const initialState = {};
-const history = createHistory();
-const store = configureStore(initialState, history);
 
+const store = configureStore(initialState);
 const breakpointValues = {
   // keep first breakpoint at zero instead of 322px, see spec material ui breakpoints at https://github.com/mui-org/material-ui/blob/master/packages/material-ui/src/styles/createBreakpoints.js
   xs: 0,
@@ -26,6 +22,9 @@ const breakpointValues = {
 };
 
 const gridAdjustments = createMuiTheme({
+  typography: {
+    useNextVariants: true,
+  },
   breakpoints: { values: breakpointValues },
   spacing: { unit: 15 },
   palette: {
@@ -42,13 +41,11 @@ const gridAdjustments = createMuiTheme({
 const MOUNT_NODE = document.getElementById('root');
 ReactDOM.render(
   <MuiThemeProvider theme={gridAdjustments}>
-  <Provider store={store}>
-    <ConnectedRouter history={history}>
-      {/* <ThemeProvider theme={} > */}
+    <Provider store={store}>
+      <StoreContext.Provider value={store}>
         <App />
-      {/* </ThemeProvider> */}
-    </ConnectedRouter>
-  </Provider>
+      </StoreContext.Provider>
+    </Provider>
   </MuiThemeProvider>,
   MOUNT_NODE,
 );

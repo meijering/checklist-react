@@ -7,7 +7,7 @@ import TextField from '@material-ui/core/TextField';
 import Card from '@material-ui/core/Card';
 import CardActions from '@material-ui/core/CardActions';
 import CardContent from '@material-ui/core/CardContent';
-import Register from '../components/Register';
+import Register from './Register';
 
 const LoginCard = styled(Card)`
   max-width: 600px;
@@ -23,6 +23,7 @@ class Login extends Component {
   static defaultProps = {
     error: '',
   };
+
   constructor(props) {
     super(props);
     this.state = {
@@ -34,16 +35,21 @@ class Login extends Component {
   }
 
   onChange = (e) => {
-    const credentials = Object.assign({}, this.state.credentials, {
-      [e.target.name]: e.target.value,
+    const { credentials } = this.state;
+    this.setState({
+      credentials: {
+        ...credentials,
+        ...{ [e.target.name]: e.target.value },
+      },
     });
-    this.setState({ credentials });
-  };
+  }
 
   validateAndSendData = (e) => {
+    const { loginUser } = this.props;
+    const { credentials } = this.state;
     e.preventDefault();
-    if (this.state.credentials.username && this.state.credentials.password) {
-      this.props.loginUser(this.state.credentials);
+    if (credentials.username && credentials.password) {
+      loginUser(credentials);
     }
   };
 

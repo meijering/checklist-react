@@ -74,9 +74,7 @@ export const scrollToY = (scrollTargetY = 0, speed = 2000, easing = 'easeOutSine
     easeOutSine: pos => Math.sin(pos * (Math.PI / 2)),
     easeInOutSine: pos => (-0.5 * (Math.cos(Math.PI * pos) - 1)),
     easeInOutQuint: pos => (
-      (pos / 0.5) < 1 ?
-        0.5 * ((pos / 0.5) ** 5) :
-        0.5 * ((((pos / 0.5) - 2) ** 5) + 2)),
+      (pos / 0.5) < 1 ? 0.5 * ((pos / 0.5) ** 5) : 0.5 * ((((pos / 0.5) - 2) ** 5) + 2)),
   };
 
   // add animation loop

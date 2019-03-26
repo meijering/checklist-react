@@ -25,6 +25,7 @@ class Register extends Component {
   static defaultProps = {
     error: '',
   }
+
   constructor(props) {
     super(props);
     this.state = {
@@ -35,13 +36,15 @@ class Register extends Component {
       },
     };
   }
+
   onChange = (e) => {
-    const credentials = Object.assign(
-      {},
-      this.state.credentials,
-      { [e.target.name]: e.target.value },
-    );
-    this.setState({ credentials });
+    e.persist();
+    this.setState(prevState => ({
+      credentials: {
+        ...prevState.credentials,
+        ...{ [e.target.name]: e.target.value },
+      },
+    }));
   }
 
   handleClickOpen = () => {
@@ -53,9 +56,12 @@ class Register extends Component {
   };
 
   validateAndSendData = (e) => {
+    const { register } = this.props;
+    const { credentials } = this.state;
     e.preventDefault();
-    if (this.state.credentials.email && this.state.credentials.name) {
-      this.props.register(this.state.credentials);
+    e.persist();
+    if (credentials.email && credentials.name) {
+      register(credentials);
     }
     this.setState({ openRegister: false });
   }

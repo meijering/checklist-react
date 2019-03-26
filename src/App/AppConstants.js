@@ -15,21 +15,6 @@ export const GET_GROUPS = 'App/GET_GROUPS';
 export const GET_GROUPS_SUCCEED = 'App/GET_GROUPS_SUCCEED';
 export const GET_GROUPS_ERROR = 'App/GET_GROUPS_ERROR';
 
-// Route names
-export const routes = {
-  GROUPS: {
-    path: '/groepen',
-    header: {
-      title: 'De groene giraf checklist',
-    },
-  },
-  default: {
-    path: '/',
-    header: {
-      title: 'De groene giraf checklist',
-    },
-  },
-};
 export const globals = {
   COPY: {},
 };

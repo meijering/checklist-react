@@ -1,14 +1,13 @@
+/* eslint-disable import/no-extraneous-dependencies */
 const path = require('path');
 const webpack = require('webpack');
 const WebpackCleanupPlugin = require('webpack-cleanup-plugin');
-// const FaviconsWebpackPlugin = require('favicons-webpack-plugin');
+const WebappWebpackPlugin = require('webapp-webpack-plugin');
 const CompressionPlugin = require('compression-webpack-plugin');
 // const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer');
 const UglifyJsPlugin = require('uglifyjs-webpack-plugin');
 
 const HtmlWebpackPlugin = require('html-webpack-plugin');
-// const featuresConfig = require('./features.config');
-// const WebpackLighthousePlugin = require('webpack-lighthouse-plugin');
 
 module.exports = (env, options = {}) => ({
   entry: {
@@ -55,9 +54,6 @@ module.exports = (env, options = {}) => ({
   },
   plugins: [
     new WebpackCleanupPlugin(),
-    // new BundleAnalyzerPlugin({
-    //   openAnalyzer: options.openAnalyzer || false,
-    // }),
     new CompressionPlugin(),
     new webpack.DefinePlugin({ 'process.env.MODE': JSON.stringify(env.MODE) }),
     new webpack.HotModuleReplacementPlugin(),
@@ -66,11 +62,7 @@ module.exports = (env, options = {}) => ({
       filename: 'index.html',
       inject: 'body',
     }),
-    // new FaviconsWebpackPlugin('./src/ziggo.svg'),
-    // new WebpackLighthousePlugin({
-    //   url: 'http://0.0.0.0:9000',
-    //   flags: ['--headless'],
-    // }),
+    new WebappWebpackPlugin('./src/assets/logo-max.png'),
   ],
   module: {
     rules: [

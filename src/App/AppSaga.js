@@ -1,7 +1,13 @@
-import { put, takeLatest, call, all } from 'redux-saga/effects';
+import {
+  put, takeLatest, call, all,
+} from 'redux-saga/effects';
 
-import { REGISTER, GET_USER, LOGOUT, SAVE_ANSWER } from './AppConstants';
-import { doLogin, doLogout, getGroups, doRegister, doSaveAnswer } from '../utils/APICalls';
+import {
+  REGISTER, GET_USER, LOGOUT, SAVE_ANSWER,
+} from './AppConstants';
+import {
+  doLogin, doLogout, getGroups, doRegister, doSaveAnswer,
+} from '../utils/APICalls';
 import {
   userLoggedIn,
   userLoggedInError,

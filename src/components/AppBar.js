@@ -50,8 +50,10 @@ class MenuAppBar extends React.Component {
   handleClose = () => {
     this.setState({ anchorEl: null });
   };
+
   handleLogOut = () => {
-    this.props.logoutUser();
+    const { logoutUser } = this.props;
+    logoutUser();
     this.setState({ anchorEl: null });
   };
 
@@ -68,7 +70,7 @@ class MenuAppBar extends React.Component {
         <AppBar position="static">
           <Toolbar>
             {loggedIn && <Img src={imageElement} alt="logo" />}
-            <Typography variant="title" color="inherit" className={classes.grow}>
+            <Typography variant="h6" color="inherit" className={classes.grow}>
               <span>checklist</span>
             </Typography>
             {loggedIn && (
