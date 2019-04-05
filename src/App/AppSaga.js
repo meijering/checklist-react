@@ -3,10 +3,10 @@ import {
 } from 'redux-saga/effects';
 
 import {
-  REGISTER, GET_USER, LOGOUT, SAVE_ANSWER,
+  REGISTER, GET_USER, LOGOUT, SAVE_ANSWER, CHECK_USER,
 } from './AppConstants';
 import {
-  doLogin, doLogout, getGroups, doRegister, doSaveAnswer,
+  doLogin, doLogout, getGroups, doRegister, doSaveAnswer, doCheckLogin,
 } from '../utils/APICalls';
 import {
   userLoggedIn,
@@ -16,6 +16,8 @@ import {
   registered,
   registerError,
   answerSaved,
+  userChecked,
+  userCheckError,
 } from './AppActions';
 
 /**
@@ -54,6 +56,14 @@ export function* loginUser(action) {
   }
 }
 
+export function* checkLogin() {
+  try {
+    const userData = yield call(doCheckLogin);
+    yield put(userChecked(userData));
+  } catch (error) {
+    yield put(userCheckError(error));
+  }
+}
 /**
  * function to log out and unload the user and questions.
  */
@@ -72,6 +82,7 @@ export function* logoutUser() {
  */
 export default function* AppListener() {
   yield all([
+    yield takeLatest(CHECK_USER, checkLogin),
     yield takeLatest(REGISTER, registerVisitor),
     yield takeLatest(GET_USER, loginUser),
     yield takeLatest(SAVE_ANSWER, saveAnswer),

@@ -106,3 +106,109 @@ export const greenLine = keyframes`
     margin-left: 50%
   }
 `;
+
+// constants for switch/case checking representation type
+const HEX = 1;
+const RGB = 2;
+const RGBA = 3;
+
+// get the string representation
+// type and set it on the element (HEX/RGB/RGBA)
+const getColorType = (val) => {
+  if (val.indexOf('#') > -1) return HEX;
+  if (val.indexOf('rgb(') > -1) return RGB;
+  if (val.indexOf('rgba(') > -1) return RGBA;
+  return null;
+};
+
+// return a workable RGB int array [r,g,b] from hex representation
+const processHEX = (val) => {
+  // does the hex contain extra char?
+  const hex = (val.length > 6) ? val.substr(1, val.length - 1) : val;
+  // is it a six character hex?
+  // scrape out the numerics
+  // if not six character hex,
+  // then work as if its a three character hex
+  const r = hex.length > 3 ? hex.substr(0, 2) : hex.substr(0, 1) + hex.substr(0, 1);
+  const g = hex.length > 3 ? hex.substr(2, 2) : hex.substr(1, 1) + hex.substr(1, 1);
+  const b = hex.length > 3 ? hex.substr(4, 2) : hex.substr(2, 1) + hex.substr(2, 1);
+  // return our clean values
+  return [
+    parseInt(r, 16),
+    parseInt(g, 16),
+    parseInt(b, 16),
+  ];
+};
+
+// return a workable RGB int array [r,g,b] from rgb/rgba representation
+const processRGB = (val) => {
+  const rgb = val.split('(')[1].split(')')[0].split(',');
+  return [
+    parseInt(rgb[0], 10),
+    parseInt(rgb[1], 10),
+    parseInt(rgb[2], 10),
+  ];
+};
+
+// process the value irrespective of representation type
+const processValue = (el) => {
+  switch (el.dataType) {
+    case HEX:
+      return processHEX(el.value);
+    case RGB:
+      return processRGB(el.value);
+    case RGBA:
+      return processRGB(el.value);
+    default:
+      return null;
+  }
+};
+
+const pad = (n, width, z) => {
+  const zn = z || '0';
+  const nn = `${n}`;
+  return nn.length >= width ? nn : new Array(width - nn.length + 1).join(zn) + nn;
+};
+
+export const findColors = (startColor, endColor, steps) => {
+// elements for obtaining vals
+  // attach start value
+  const startWith = {
+    dataType: getColorType(startColor),
+    value: startColor,
+  };
+  const endWith = {
+    dataType: getColorType(endColor),
+    value: endColor,
+  };
+  const val1RGB = processValue(startWith);
+  const val2RGB = processValue(endWith);
+
+  // the percentage representation of the step
+  const stepsPerc = 100 / (steps + 1);
+
+  // diffs between two values
+  const valClampRGB = [
+    val2RGB[0] - val1RGB[0],
+    val2RGB[1] - val1RGB[1],
+    val2RGB[2] - val1RGB[2],
+  ];
+
+  // build the color array out with color steps
+
+  return [...Array(steps)].map((s, i) => [
+    '#',
+    (valClampRGB[0] > 0)
+      ? pad((Math.round(valClampRGB[0] / 100 * (stepsPerc * (i + 1)))).toString(16), 2)
+      : pad((Math.round((val1RGB[0] + (valClampRGB[0])
+        / 100 * (stepsPerc * (i + 1))))).toString(16), 2),
+    (valClampRGB[1] > 0)
+      ? pad((Math.round(valClampRGB[1] / 100 * (stepsPerc * (i + 1)))).toString(16), 2)
+      : pad((Math.round((val1RGB[1] + (valClampRGB[1])
+        / 100 * (stepsPerc * (i + 1))))).toString(16), 2),
+    (valClampRGB[2] > 0)
+      ? pad((Math.round(valClampRGB[2] / 100 * (stepsPerc * (i + 1)))).toString(16), 2)
+      : pad((Math.round((val1RGB[2] + (valClampRGB[2])
+        / 100 * (stepsPerc * (i + 1))))).toString(16), 2),
+  ].join(''));
+};

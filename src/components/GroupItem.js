@@ -1,10 +1,11 @@
-import React from 'react';
+import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import styled from 'styled-components';
 import { Progress } from 'react-sweet-progress';
 import AnimateHeight from 'react-animate-height';
 import ChevronLeft from '@material-ui/icons/ChevronLeft';
 import { media } from '../utils/media';
+import { findColors } from '../utils/animations';
 
 export const Group = styled.div`
   box-shadow: 1px 2px 5px #8bc34a;
@@ -146,56 +147,70 @@ export const Nmbr = styled.span`
   color: #222;
 `;
 
-export default class GroupItem extends React.PureComponent {
-  state = {
-    questionsToggled: true,
-  }
+const progressTheme = () => {
+  const colors = [
+    ...findColors('#ff0000', '#EE9A00', 50),
+    ...findColors('#EE9A00', '#008025', 50),
+  ];
+  return colors.map((color, idx) => ({ [`percent${idx}`]: { color } }))
+    .reduce((acc, curr) => ({ ...acc, ...curr }), {});
+};
 
-  toggleQuestions = () => {
-    const { id, toggleActive } = this.props;
-    this.setState(
-      prevState => ({ questionsToggled: !prevState.questionsToggled }),
-      () => {
-        const { questionsToggled } = this.state;
-        toggleActive(id, !questionsToggled);
-      },
-    );
-  }
+const GroupItem = ({
+  id, name, toggleActive, nmbrOfQuestions, nmbrOfAnswers, children,
+}) => {
+  const [questionsToggled, setQuestionsToggled] = useState(true);
 
-  render() {
-    const {
-      name,
-      nmbrOfQuestions,
-      nmbrOfAnswers,
-      children,
-    } = this.props;
-    const { questionsToggled } = this.state;
-    return (
-      <Group>
-        <GroupBar onClick={this.toggleQuestions}>
-          <Div>
-            <Progress
-              type="circle"
-              width={50}
-              strokeWidth={10}
-              percent={parseInt((nmbrOfAnswers / nmbrOfQuestions) * 100, 10)}
-            />
-            <Name>{name}</Name>
-            <Nmbr>{`(${nmbrOfQuestions})`}</Nmbr>
-          </Div>
-          <Button className={questionsToggled ? 'closed' : 'opened'} />
-        </GroupBar>
-        <QuestionContainer
-          duration={300}
-          animateOpacity
-          height={questionsToggled ? 0 : 'auto'}
-        >
-          {children}
-        </QuestionContainer>
-      </Group>
-    );
-  }
-}
+  const toggleQuestions = () => {
+    setQuestionsToggled(!questionsToggled);
+    toggleActive(id, !questionsToggled);
+  };
+
+  const colorSwitch = () => {
+    const percent = parseInt((nmbrOfAnswers / nmbrOfQuestions) * 100, 10);
+    if (percent === 0) return 'error';
+    if (percent === 100) return 'success';
+    return `percent${percent}`;
+  };
+
+  const percent = parseInt((nmbrOfAnswers / nmbrOfQuestions) * 100, 10);
+  return (
+    <Group>
+      <GroupBar onClick={toggleQuestions}>
+        <Div>
+          <Progress
+            type="circle"
+            width={50}
+            strokeWidth={10}
+            theme={
+              {
+                ...progressTheme(),
+                success: {
+                  color: '#008025',
+                },
+                error: {
+                  color: '#ff0000',
+                },
+              }
+            }
+            status={colorSwitch()}
+            percent={percent}
+          />
+          <Name>{name}</Name>
+          <Nmbr>{`(${nmbrOfQuestions})`}</Nmbr>
+        </Div>
+        <Button className={questionsToggled ? 'closed' : 'opened'} />
+      </GroupBar>
+      <QuestionContainer
+        duration={300}
+        animateOpacity
+        height={questionsToggled ? 0 : 'auto'}
+      >
+        {children}
+      </QuestionContainer>
+    </Group>
+  );
+};
 
 GroupItem.propTypes = {
   id: PropTypes.string.isRequired,
@@ -208,3 +223,5 @@ GroupItem.propTypes = {
     PropTypes.node,
   ]).isRequired,
 };
+
+export default GroupItem;

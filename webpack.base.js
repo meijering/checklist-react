@@ -47,7 +47,7 @@ module.exports = (env, options = {}) => ({
     proxy: (options.devServer && options.devServer.proxy) || [
       {
         context: ['/api/**'],
-        target: 'http://0.0.0.0:3000/',
+        target: 'https://dgg-checklist.herokuapp.com/',
         secure: false,
       },
     ],

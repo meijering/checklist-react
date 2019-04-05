@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import styled from 'styled-components';
 
@@ -13,92 +13,77 @@ const LoginCard = styled(Card)`
   max-width: 600px;
   margin: 0 auto;
 `;
-class Login extends Component {
-  static propTypes = {
-    loginUser: PropTypes.func.isRequired,
-    register: PropTypes.func.isRequired,
-    error: PropTypes.string,
-  };
 
-  static defaultProps = {
-    error: '',
-  };
+const Login = ({
+  loginUser, register, registered, error,
+}) => {
+  const [credentials, setCredentials] = useState({
+    username: '',
+    password: '',
+  });
 
-  constructor(props) {
-    super(props);
-    this.state = {
-      credentials: {
-        username: '',
-        password: '',
-      },
-    };
-  }
-
-  onChange = (e) => {
-    const { credentials } = this.state;
-    this.setState({
-      credentials: {
-        ...credentials,
-        ...{ [e.target.name]: e.target.value },
-      },
+  const onChange = (e) => {
+    setCredentials({
+      ...credentials,
+      ...{ [e.target.name]: e.target.value },
     });
-  }
+  };
 
-  validateAndSendData = (e) => {
-    const { loginUser } = this.props;
-    const { credentials } = this.state;
+  const validateAndSendData = (e) => {
     e.preventDefault();
     if (credentials.username && credentials.password) {
       loginUser(credentials);
     }
   };
+  console.log('---', registered);
+  return (
+    <LoginCard
+      aria-labelledby="form-dialog-title"
+    >
+      <CardContent>
+        {error}
+        <TextField
+          autoFocus
+          margin="dense"
+          id="name"
+          name="username"
+          label="e-mailadres"
+          type="email"
+          value={credentials.username}
+          onChange={onChange}
+          fullWidth
+        />
+        <TextField
+          type="password"
+          name="password"
+          label="wachtwoord"
+          value={credentials.password}
+          onChange={onChange}
+          fullWidth
+        />
+      </CardContent>
+      <CardActions>
+        <Button variant="outlined" onClick={validateAndSendData} color="primary">
+          Inloggen
+        </Button>
+        <Register
+          register={register}
+          registered={registered}
+        />
+      </CardActions>
+    </LoginCard>
+  );
+};
 
-  render() {
-    const {
-      register,
-      error,
-    } = this.props;
-    const { credentials } = this.state;
-    return (
-        <LoginCard
-          aria-labelledby="form-dialog-title"
-        >
-          <CardContent>
-            {error}
-            <TextField
-              autoFocus
-              margin="dense"
-              id="name"
-              name="username"
-              label="e-mailadres"
-              type="email"
-              value={credentials.username}
-              onChange={this.onChange}
-              fullWidth
-            />
-            <TextField
-              type="password"
-              name="password"
-              label="wachtwoord"
-              value={credentials.password}
-              onChange={this.onChange}
-              fullWidth
-            />
-          </CardContent>
-          <CardActions>
-            <Button variant="outlined" onClick={this.validateAndSendData} color="primary">
-              Inloggen
-            </Button>
-            <Button variant="outlined" onClick={this.handleClose}>
-              Annuleren
-            </Button>
-            <Register
-              register={register}
-            />
-          </CardActions>
-        </LoginCard>
-    );
-  }
-}
+Login.propTypes = {
+  loginUser: PropTypes.func.isRequired,
+  register: PropTypes.func.isRequired,
+  registered: PropTypes.string.isRequired,
+  error: PropTypes.string,
+};
+
+Login.defaultProps = {
+  error: '',
+};
 
 export default Login;

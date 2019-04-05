@@ -1,7 +1,8 @@
-import React, { PureComponent } from 'react';
+import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import styled from 'styled-components';
 import Checkbox from '@material-ui/core/Checkbox';
+import FormControlLabel from '@material-ui/core/FormControlLabel';
 import { TextField } from '@material-ui/core';
 import { Icon } from 'react-icons-kit';
 /* eslint-disable camelcase */
@@ -37,8 +38,9 @@ const Check = styled(Checkbox)`
 `;
 
 const QuestionBox = styled.div`
-  padding-right: 6px;
-  line-height: 24px;
+  & span {
+    font-size: 18px;
+  }
 `;
 
 export const QuestionInfo = styled(AnimateHeight)`
@@ -67,93 +69,84 @@ const InfoContent = styled.div`
   flex: 0 0 90%;
 `;
 
-class Question extends PureComponent {
-  static propTypes = {
-    question: PropTypes.shape().isRequired,
-    saveAnswer: PropTypes.func.isRequired,
-    showDetail: PropTypes.bool,
-  }
+const setLastAnswer = question => (question.answers
+  ? question.answers.sort((a, b) => new Date(b.ingevoerd_op) - new Date(a.ingevoerd_op))
+    .map(a => a.antwoord)[0]
+  : '');
 
-  static defaultProps = {
-    showDetail: false,
-  }
+const Question = ({ question, saveAnswer, showDetail }) => {
+  const [more, setMore] = useState(setLastAnswer(question));
+  const lastAnswer = (question.answers
+    ? question.answers.sort((a, b) => new Date(b.ingevoerd_op) - new Date(a.ingevoerd_op))
+      .map(a => a.antwoord)[0] === '1'
+    : false);
 
-  constructor(props) {
-    super(props);
-    this.state = {
-      more: this.setLastAnswer(),
-    };
-  }
-
-  onChange = (e) => {
-    this.setState({ more: e.target.value });
+  const onChange = (e) => {
+    setMore(e.target.value);
   };
 
-  getLastAnswer = () => {
-    const { question } = this.props;
-    return (question.answers
-      ? question.answers.sort((a, b) => new Date(b.ingevoerd_op) - new Date(a.ingevoerd_op))
-        .map(a => a.antwoord)[0] === '1' : false);
-  }
+  const saveCheck = () => {
+    saveAnswer(question.vraag_id, lastAnswer ? '' : '1');
+  };
 
-  setLastAnswer = () => {
-    const { question } = this.props;
-    return (question.answers
-      ? question.answers.sort((a, b) => new Date(b.ingevoerd_op) - new Date(a.ingevoerd_op))
-        .map(a => a.antwoord)[0] : '');
-  }
-
-  saveCheck = () => {
-    const { question, saveAnswer } = this.props;
-    saveAnswer(question.vraag_id, this.getLastAnswer() ? '' : '1');
-  }
-
-  saveThis = () => {
-    const { question, saveAnswer } = this.props;
-    const { more } = this.state;
-    if (more !== this.setLastAnswer()) {
+  const saveThis = () => {
+    if (more !== setLastAnswer(question)) {
       saveAnswer(question.vraag_id, more);
     }
-  }
+  };
 
   /* eslint-disable camelcase */
-  render() {
-    const { question, showDetail } = this.props;
-    const { more } = this.state;
-    return (
-      <React.Fragment>
-        <Bar>
-        {question.type === 'checkbox' && (
-          <React.Fragment>
-            <Check checked={this.getLastAnswer()} onChange={() => this.saveCheck()} value="1" />
-          </React.Fragment>
-        )}
-        <QuestionBox>{question.vraag}</QuestionBox>
-        </Bar>
-        {(question.tips || question.remarks) && (
-          <QuestionInfo
-            duration={300}
-            animateOpacity
-            height={showDetail ? 'auto' : 0}
-          >
-            <InfoContainer>
-              <Navigator>
-              <Icon size="20" icon={ic_lightbulb_outline} />
-              <Icon size="16" icon={ic_comment} />
-              </Navigator>
-              <InfoContent>
-                {question.tips.map(tip => <Tip key={`tip-${tip.tip_id}`} dangerouslySetInnerHTML={{ __html: tip.tip }} />)}
-                <Remarks remarks={question.remarks} />
-              </InfoContent>
-            </InfoContainer>
-          </QuestionInfo>
-        )}
-        {question.type !== 'checkbox' && (
-          <TextField rows="4" multiline fullWidth value={more} onChange={this.onChange} onBlur={this.saveThis} variant="outlined" />
-        )}
-      </React.Fragment>
-    );
-  }
-}
+  return (
+    <React.Fragment>
+      <Bar>
+      {question.type === 'checkbox' && (
+        <QuestionBox>
+          <FormControlLabel
+            control={(
+              <Check
+                checked={lastAnswer}
+                onChange={() => saveCheck()}
+                value="1"
+              />
+              )}
+            label={question.vraag}
+          />
+        </QuestionBox>
+      )}
+      </Bar>
+      {(question.tips || question.remarks) && (
+        <QuestionInfo
+          duration={300}
+          animateOpacity
+          height={showDetail ? 'auto' : 0}
+        >
+          <InfoContainer>
+            <Navigator>
+            <Icon size="20" icon={ic_lightbulb_outline} />
+            <Icon size="16" icon={ic_comment} />
+            </Navigator>
+            <InfoContent>
+              {question.tips.map(tip => <Tip key={`tip-${tip.tip_id}`} dangerouslySetInnerHTML={{ __html: tip.tip }} />)}
+              <Remarks remarks={question.remarks} />
+            </InfoContent>
+          </InfoContainer>
+        </QuestionInfo>
+      )}
+      {question.type !== 'checkbox' && (
+        <TextField rows="4" multiline fullWidth value={more} onChange={onChange} onBlur={saveThis} variant="outlined" />
+      )}
+    </React.Fragment>
+  );
+};
+
+Question.propTypes = {
+  question: PropTypes.shape().isRequired,
+  saveAnswer: PropTypes.func.isRequired,
+  showDetail: PropTypes.bool,
+};
+
+Question.defaultProps = {
+  showDetail: false,
+};
 
 export default Question;

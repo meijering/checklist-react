@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import styled from 'styled-components';
 import { withStyles } from '@material-ui/core/styles';
@@ -38,76 +38,67 @@ const Img = styled.img`
   `}
 `;
 
-class MenuAppBar extends React.Component {
-  state = {
-    anchorEl: null,
+const MenuAppBar = ({
+  logoutUser, classes, loggedIn, user,
+}) => {
+  const [anchorEl, setAnchorEl] = useState(null);
+
+  const handleMenu = (event) => {
+    setAnchorEl(event.currentTarget);
   };
 
-  handleMenu = (event) => {
-    this.setState({ anchorEl: event.currentTarget });
+  const handleClose = () => {
+    setAnchorEl(null);
   };
 
-  handleClose = () => {
-    this.setState({ anchorEl: null });
-  };
-
-  handleLogOut = () => {
-    const { logoutUser } = this.props;
+  const handleLogOut = () => {
     logoutUser();
-    this.setState({ anchorEl: null });
+    setAnchorEl(null);
   };
 
-  render() {
-    const {
-      classes,
-      loggedIn,
-      user,
-    } = this.props;
-    const { anchorEl } = this.state;
-    const open = Boolean(anchorEl);
+  const open = Boolean(anchorEl);
 
-    return (
-        <AppBar position="static">
-          <Toolbar>
-            {loggedIn && <Img src={imageElement} alt="logo" />}
-            <Typography variant="h6" color="inherit" className={classes.grow}>
-              <span>checklist</span>
-            </Typography>
-            {loggedIn && (
-              <React.Fragment>
-                {user.naam}
-                <IconButton
-                  aria-owns={open ? 'menu-appbar' : undefined}
-                  aria-haspopup="true"
-                  onClick={this.handleMenu}
-                  color="inherit"
-                >
-                  <AccountCircle />
-                </IconButton>
-                <Menu
-                  id="menu-appbar"
-                  anchorEl={anchorEl}
-                  anchorOrigin={{
-                    vertical: 'top',
-                    horizontal: 'right',
-                  }}
-                  transformOrigin={{
-                    vertical: 'top',
-                    horizontal: 'right',
-                  }}
-                  open={open}
-                  onClose={this.handleClose}
-                >
-                  <MenuItem onClick={this.handleClose}>Mijn gegevens</MenuItem>
-                  <MenuItem onClick={this.handleLogOut}>Uitloggen</MenuItem>
-                </Menu>
-              </React.Fragment>
-            )}
-          </Toolbar>
-        </AppBar>
-    );
-  }
-}
+  return (
+    <AppBar position="static">
+      <Toolbar>
+        {loggedIn && <Img src={imageElement} alt="logo" />}
+        <Typography variant="h6" color="inherit" className={classes.grow}>
+          <span>checklist</span>
+        </Typography>
+        {loggedIn && (
+          <React.Fragment>
+            {user.naam}
+            <IconButton
+              aria-owns={open ? 'menu-appbar' : undefined}
+              aria-haspopup="true"
+              onClick={handleMenu}
+              color="inherit"
+            >
+              <AccountCircle />
+            </IconButton>
+            <Menu
+              id="menu-appbar"
+              anchorEl={anchorEl}
+              anchorOrigin={{
+                vertical: 'top',
+                horizontal: 'right',
+              }}
+              transformOrigin={{
+                vertical: 'top',
+                horizontal: 'right',
+              }}
+              open={open}
+              onClose={handleClose}
+            >
+              <MenuItem onClick={handleClose}>Mijn gegevens</MenuItem>
+              <MenuItem onClick={handleLogOut}>Uitloggen</MenuItem>
+            </Menu>
+          </React.Fragment>
+        )}
+      </Toolbar>
+    </AppBar>
+  );
+};
 
 MenuAppBar.propTypes = {
   classes: PropTypes.shape().isRequired,

@@ -1,4 +1,4 @@
-import React, { PureComponent } from 'react';
+import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import AnimateHeight from 'react-animate-height';
 import styled from 'styled-components';
@@ -30,50 +30,39 @@ const GrowContainer = styled(AnimateHeight)`
 `;
 
 
-class ExpandingList extends PureComponent {
-  static propTypes = {
-    children: PropTypes.arrayOf(PropTypes.node).isRequired,
-  }
+const ExpandingList = ({ children }) => {
+  const [itemsToggled, setItemsToggled] = useState(children.map(() => 0));
 
-  constructor(props) {
-    super(props);
-    this.state = {
-      itemsToggled: props.children.map(() => 0),
-    };
-  }
-
-  toggleItems = (selectedItem) => {
-    const { children } = this.props;
-    const { itemsToggled } = this.state;
+  const toggleItems = (selectedItem) => {
     const currentItemsToggled = itemsToggled[selectedItem] === 1
       ? children.map(() => 0)
       : children.map((item, idx) => (idx === selectedItem ? 1 : -1));
-    this.setState({ itemsToggled: currentItemsToggled });
-  }
+    setItemsToggled(currentItemsToggled);
+  };
 
-  render() {
-    const { children } = this.props;
-    const { itemsToggled } = this.state;
-    const processedChildren = React.Children.map(children, (child, idx) => (
-      React.cloneElement(child, { showDetail: itemsToggled[idx] === 1 })
-    ));
+  const processedChildren = React.Children.map(children, (child, idx) => (
+    React.cloneElement(child, { showDetail: itemsToggled[idx] === 1 })
+  ));
 
-    return processedChildren.map((child, idx) => {
-      const currentState = itemsToggled[idx] >= 0;
-      const id = `item-${idx}`;
-      return (
-        <GrowContainer
-          key={id}
-          duration={300}
-          animateOpacity
-          height={currentState ? 'auto' : 0}
-        >
-            <Handle onClick={() => this.toggleItems(idx)} />
-            {child}
-        </GrowContainer>
-      );
-    });
-  }
-}
+  return processedChildren.map((child, idx) => {
+    const currentState = itemsToggled[idx] >= 0;
+    const id = `item-${idx}`;
+    return (
+      <GrowContainer
+        key={id}
+        duration={300}
+        animateOpacity
+        height={currentState ? 'auto' : 0}
+      >
+          <Handle onClick={() => toggleItems(idx)} />
+          {child}
+      </GrowContainer>
+    );
+  });
+};
+
+ExpandingList.propTypes = {
+  children: PropTypes.arrayOf(PropTypes.node).isRequired,
+};
 
 export default ExpandingList;

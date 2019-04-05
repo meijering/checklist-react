@@ -31,6 +31,15 @@ export function doRegister(credentials) {
 }
 
 /**
+ * check if loggedIn to the application
+ *
+ * @returns {Object} current bundle and current assigned add-ons
+ */
+export function doCheckLogin() {
+  return axios(`${base}/auth/check`);
+}
+
+/**
  * login to the application
  *
  * @returns {Object} current bundle and current assigned add-ons

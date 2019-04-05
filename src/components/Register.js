@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import styled from 'styled-components';
 
@@ -16,104 +16,106 @@ const But = styled.span`
   text-decoration: underline;
 `;
 
-class Register extends Component {
-  static propTypes = {
-    register: PropTypes.func.isRequired,
-    error: PropTypes.string,
-  };
+const Register = ({ register, registered }) => {
+  const [openRegister, setOpenRegister] = useState(false);
+  const [error, setError] = useState('');
+  const [credentials, setCredentials] = useState({
+    email: '',
+    name: '',
+  });
 
-  static defaultProps = {
-    error: '',
-  }
+  useEffect(() => {
+    if (registered === 'NOK') {
+      setError('Dit e-mailadres kon niet worden regegistreerd');
+    }
+  }, [registered]);
 
-  constructor(props) {
-    super(props);
-    this.state = {
-      openRegister: false,
-      credentials: {
-        email: '',
-        name: '',
-      },
-    };
-  }
-
-  onChange = (e) => {
+  const onChange = (e) => {
     e.persist();
-    this.setState(prevState => ({
-      credentials: {
-        ...prevState.credentials,
-        ...{ [e.target.name]: e.target.value },
-      },
-    }));
-  }
-
-  handleClickOpen = () => {
-    this.setState({ openRegister: true });
+    setCredentials({
+      ...credentials,
+      ...{ [e.target.name]: e.target.value },
+    });
   };
 
-  handleClose = () => {
-    this.setState({ openRegister: false });
+  const handleClickOpen = () => {
+    setOpenRegister(true);
   };
 
-  validateAndSendData = (e) => {
-    const { register } = this.props;
-    const { credentials } = this.state;
+  const handleClose = () => {
+    setOpenRegister(false);
+  };
+
+  const validateAndSendData = (e) => {
     e.preventDefault();
     e.persist();
     if (credentials.email && credentials.name) {
       register(credentials);
     }
-    this.setState({ openRegister: false });
-  }
+  };
 
-  render() {
-    const {
-      error,
-    } = this.props;
-    const { credentials, openRegister } = this.state;
-    return (
-      <React.Fragment>
-        <But onClick={this.handleClickOpen}>(registreren)</But>
-        <Dialog
-          open={openRegister}
-          onClose={this.handleClose}
-          aria-labelledby="form-dialog-title"
-        >
-          <DialogTitle id="form-dialog-title">Registreren</DialogTitle>
-          <DialogContent>
-            <DialogContentText>{error}</DialogContentText>
-            <TextField
-              autoFocus
-              margin="dense"
-              id="name"
-              name="email"
-              label="E-mailadres"
-              type="email"
-              value={credentials.email}
-              onChange={this.onChange}
-              fullWidth
-            />
-            <TextField
-              type="text"
-              name="name"
-              label="Naam"
-              value={credentials.name}
-              onChange={this.onChange}
-              fullWidth
-            />
-          </DialogContent>
-          <DialogActions>
-            <Button onClick={this.handleClose} color="primary">
-              Annuleren
-            </Button>
-            <Button onClick={this.validateAndSendData} color="primary">
-              Registreren
-            </Button>
-          </DialogActions>
-        </Dialog>
-      </React.Fragment>
-    );
-  }
-}
+  return (
+    <React.Fragment>
+      <But onClick={handleClickOpen}>(registreren)</But>
+      <Dialog
+        open={openRegister}
+        onClose={handleClose}
+        aria-labelledby="form-dialog-title"
+      >
+        <DialogTitle id="form-dialog-title">Registreren</DialogTitle>
+        {registered === 'OK' ? (
+          <React.Fragment>
+            <DialogContent>
+              Je bent geregistreerd. Je ontvangt een E-mail waarn je inloggegevens staan.
+            </DialogContent>
+            <DialogActions>
+              <Button onClick={handleClose} color="primary">
+                Sluiten
+              </Button>
+            </DialogActions>
+          </React.Fragment>
+        ) : (
+          <React.Fragment>
+            <DialogContent>
+              <DialogContentText>{error}</DialogContentText>
+                  <TextField
+                    autoFocus
+                    margin="dense"
+                    id="name"
+                    name="email"
+                    label="E-mailadres"
+                    type="email"
+                    value={credentials.email}
+                    onChange={onChange}
+                    fullWidth
+                  />
+                  <TextField
+                    type="text"
+                    name="name"
+                    label="Naam"
+                    value={credentials.name}
+                    onChange={onChange}
+                    fullWidth
+                  />
+            </DialogContent>
+            <DialogActions>
+              <Button onClick={handleClose} color="primary">
+                Annuleren
+              </Button>
+              <Button onClick={validateAndSendData} color="primary">
+                Registreren
+              </Button>
+            </DialogActions>
+          </React.Fragment>
+        )}
+      </Dialog>
+    </React.Fragment>
+  );
+};
+
+Register.propTypes = {
+  register: PropTypes.func.isRequired,
+  registered: PropTypes.string.isRequired,
+};
 
 export default Register;

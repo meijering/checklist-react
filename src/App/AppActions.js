@@ -1,12 +1,32 @@
 import {
   REGISTER, REGISTER_SUCCEED, REGISTER_ERROR, GET_USER, GET_USER_SUCCEED, GET_USER_ERROR,
   LOGOUT, LOGOUT_ERROR, LOGOUT_SUCCEED, SAVE_ANSWER, SAVE_ANSWER_SUCCEED,
+  CHECK_USER, CHECK_USER_SUCCEED, CHECK_USER_ERROR,
 } from './AppConstants';
 
 export function loginUser(credentials) {
   return {
     type: GET_USER,
     credentials,
+  };
+}
+
+export function checkUser() {
+  return {
+    type: CHECK_USER,
+  };
+}
+export function userChecked(userData) {
+  return {
+    type: CHECK_USER_SUCCEED,
+    userData,
+  };
+}
+
+export function userCheckError(error) {
+  return {
+    type: CHECK_USER_ERROR,
+    error,
   };
 }
 
