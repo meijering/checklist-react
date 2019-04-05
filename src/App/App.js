@@ -56,7 +56,7 @@ const AppImpl = (props) => {
   useEffect(() => {
     checkUser();
   }, []);
-  console.log('====', isRegistered);
+
   return hasLoaded ? (
     <div className="App">
       <AppBar user={user} loggedIn={loggedIn} logoutUser={logoutUser} />
