@@ -1,8 +1,8 @@
 import axios from 'axios';
 
 axios.defaults.withCredentials = true;
-// const base = 'https://dgg-checklist.herokuapp.com';
-const base = 'http://localhost:3000';
+const base = 'https://dgg-checklist.herokuapp.com';
+// const base = 'http://localhost:3000';
 
 /**
  * login to the application
