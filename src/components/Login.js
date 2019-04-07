@@ -35,7 +35,6 @@ const Login = ({
       loginUser(credentials);
     }
   };
-  console.log('---', registered);
   return (
     <LoginCard
       aria-labelledby="form-dialog-title"

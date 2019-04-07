@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import styled from 'styled-components';
 import Checkbox from '@material-ui/core/Checkbox';
@@ -10,9 +10,18 @@ import { ic_lightbulb_outline } from 'react-icons-kit/md/ic_lightbulb_outline';
 import { ic_comment } from 'react-icons-kit/md/ic_comment';
 /* eslint-enable camelcase */
 import AnimateHeight from 'react-animate-height';
+import ScaleLoader from 'react-spinners/ScaleLoader';
+
 import { media } from '../utils/media';
 import Remarks from './Remarks';
 
+const Loader = styled.div`
+  position: absolute;
+  background-color: #ffffff;
+  z-index: 2;
+  display: block;
+  margin: 0 auto;
+`;
 
 const Bar = styled.div`
   display: flex;
@@ -38,6 +47,8 @@ const Check = styled(Checkbox)`
 `;
 
 const QuestionBox = styled.div`
+  display: inline-flex;
+  align-items: center;
   & span {
     font-size: 18px;
   }
@@ -76,6 +87,10 @@ const setLastAnswer = question => (question.answers
 
 const Question = ({ question, saveAnswer, showDetail }) => {
   const [more, setMore] = useState(setLastAnswer(question));
+  const [inProgress, setInProgress] = useState(false);
+  useEffect(() => {
+    setInProgress(false);
+  }, [question]);
   const lastAnswer = (question.answers
     ? question.answers.sort((a, b) => new Date(b.ingevoerd_op) - new Date(a.ingevoerd_op))
       .map(a => a.antwoord)[0] === '1'
@@ -86,6 +101,7 @@ const Question = ({ question, saveAnswer, showDetail }) => {
   };
 
   const saveCheck = () => {
+    setInProgress(true);
     saveAnswer(question.vraag_id, lastAnswer ? '' : '1');
   };
 
@@ -101,12 +117,24 @@ const Question = ({ question, saveAnswer, showDetail }) => {
       <Bar>
       {question.type === 'checkbox' && (
         <QuestionBox>
+          <Loader>
+            <ScaleLoader
+              widthUnit="px"
+              heightUnit="px"
+              width={3}
+              height={24}
+              margin="2px"
+              color="#008025"
+              loading={inProgress}
+            />
+          </Loader>
           <FormControlLabel
             control={(
               <Check
                 checked={lastAnswer}
                 onChange={() => saveCheck()}
                 value="1"
+                disabled={inProgress}
               />
               )}
             label={question.vraag}

@@ -27,11 +27,13 @@ import { media } from '../utils/media';
 
 const Content = styled.div`
   padding: 30px 100px;
-  ${media.phone`
-    padding: 12px;
-  `}
-  & p {
+  & p, & ul {
     font-size: 20px;
+    margin-top: 0;
+  }
+  & p.smaller {
+    font-size: 14px;
+    margin-top: 20px;
   }
   & img {
     float: left;
@@ -39,6 +41,23 @@ const Content = styled.div`
   & a {
     color: green;
   }
+  ${media.phone`
+    padding: 12px;
+    & h1 {
+      font-size: 1.5em;
+    }
+    & p, & ul {
+      font-size: 16px;
+    }
+    & ul {
+      padding-left: 32px;
+    }
+  `}
+`;
+
+const Row = styled.div`
+  display: flex;
+  margin-top: 50px;
 `;
 
 const AppImpl = (props) => {
@@ -60,40 +79,34 @@ const AppImpl = (props) => {
   return hasLoaded ? (
     <div className="App">
       <AppBar user={user} loggedIn={loggedIn} logoutUser={logoutUser} />
-
       {loggedIn
         ? <Groups groups={groups} saveAnswer={saveAnswer} />
         : (
         <Content>
-          <img src={imageElement} alt="logo" />
-          <h1>Welkom bij de checklist duurzame kinderopvang van de Groene Giraf!</h1>
-          <p>Wil je:</p>
-          <ul>
-            <li>Bewuster omgaan met grondstoffen?</li>
-            <li>Een natuurlijke, gifvrije omgeving creëren?</li>
-            <li>Goed doen voor mens en maatschappij?</li>
-            <li>Een kleinere voetafdruk en meer impact</li>
-          </ul>
+          <Row>
+            <img src={imageElement} alt="logo" />
+            <h1>
+              Welkom bij de duurzame checklist
+              <br />
+              van de Groene Giraf!
+            </h1>
+          </Row>
+          <Row>
+            <p><strong>Wil je:</strong></p>
+            <ul>
+              <li>Bewuster omgaan met grondstoffen?</li>
+              <li>Een natuurlijke, gifvrije omgeving creëren?</li>
+              <li>Een kleinere ecologische voetafdruk zetten?</li>
+              <li>Je gedrag verduurzamen?</li>
+            </ul>
+          </Row>
           <p>
             Log in en ontdek snel waar jouw kansen liggen om bij te dragen aan een mooiere,
-            schone en voor iedereen welvarende toekomst! Na invullen van de checklist zie je
-            waar jullie goed in zijn en waar je nog groene stappen kunt maken.
+            schone en voor iedereen welvarende toekomst!
           </p>
-
           <p>
             Heb je nog geen inloggegevens? Klik dan op registeren. Vul de gevraagde gegevens
             in en ontvang binnen een  paar tellen je inloggegevens per mail.
-            <br />
-            Deze checklist geeft inzicht in de prestaties van jouw kinderopvang op het gebied
-            van duurzaamheid.
-            <br />
-            Voor een specifiek (locatie) advies, inspiratie tijdens een studiedag of voor een
-            workshop kun je de Groene Giraf ook inschakelen. Neem voor de mogelijkheden of een
-            vrijblijvende offerte contact op met Ilse Vlaming, initiatiefnemer van de Groene Giraf
-            via
-            <a href="tel:06 41 848 766">06 41 848 766</a>
-            of
-            <a href="mailto:info@degroenegiraf.nl">info@degroenegiraf.nl</a>
           </p>
           <Login
             loginUser={loginUser}
@@ -103,6 +116,16 @@ const AppImpl = (props) => {
             user={user}
             loggedIn={loggedIn}
           />
+          <p className="smaller">
+            Voor een specifiek (locatie) advies, inspiratie tijdens een studiedag of voor een
+            workshop kun je de Groene Giraf ook inschakelen. Neem voor de mogelijkheden of een
+            vrijblijvende offerte contact op met Ilse Vlaming, initiatiefnemer van de Groene Giraf
+            via
+            <a href="tel:06 41 848 766">06 41 848 766</a>
+            of
+            <a href="mailto:info@degroenegiraf.nl">info@degroenegiraf.nl</a>
+
+          </p>
         </Content>
         )}
     </div>

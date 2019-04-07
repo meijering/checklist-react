@@ -59,7 +59,13 @@ export function* loginUser(action) {
 export function* checkLogin() {
   try {
     const userData = yield call(doCheckLogin);
-    yield put(userChecked(userData));
+    // yield put(userChecked(userData));
+    if (userData) {
+      const groupData = yield call(getGroups);
+      yield put(userLoggedIn(userData, groupData));
+    } else {
+      yield put(userChecked(userData));
+    }
   } catch (error) {
     yield put(userCheckError(error));
   }

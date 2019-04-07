@@ -5,7 +5,7 @@ const WebpackCleanupPlugin = require('webpack-cleanup-plugin');
 const WebappWebpackPlugin = require('webapp-webpack-plugin');
 const CompressionPlugin = require('compression-webpack-plugin');
 // const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer');
-const UglifyJsPlugin = require('uglifyjs-webpack-plugin');
+const TerserPlugin = require('terser-webpack-plugin');
 
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 
@@ -17,7 +17,7 @@ module.exports = (env, options = {}) => ({
     path: path.resolve(__dirname, './dist'),
     filename: '[name]-[hash]-bundle.js',
     chunkFilename: '[name]-[hash]-bundle.js',
-    publicPath: '/',
+    publicPath: '/v2/',
   },
   mode: options.mode || 'development',
   devtool: options.devtool || 'inline-source-map',
@@ -34,7 +34,7 @@ module.exports = (env, options = {}) => ({
         },
       },
     },
-    minimizer: [new UglifyJsPlugin()],
+    minimizer: [new TerserPlugin()],
   },
 
   devServer: {
