@@ -8,7 +8,7 @@
 import { fromJS } from 'immutable';
 
 import {
-  GET_USER, GET_USER_SUCCEED, LOGOUT, LOGOUT_SUCCEED, LOGOUT_ERROR, SAVE_ANSWER,
+  GET_USER, GET_USER_SUCCEED, GET_USER_ERROR, LOGOUT, LOGOUT_SUCCEED, LOGOUT_ERROR, SAVE_ANSWER,
   SAVE_ANSWER_SUCCEED, SAVE_ANSWER_ERROR, CHECK_USER, CHECK_USER_SUCCEED, CHECK_USER_ERROR,
   REGISTER_SUCCEED,
 } from './AppConstants';
@@ -20,6 +20,7 @@ const initialState = fromJS({
   hasLoaded: false,
   groups: [],
   isRegistered: '',
+  error: null,
 });
 
 function appReducer(state = initialState, action = {}) {
@@ -31,7 +32,6 @@ function appReducer(state = initialState, action = {}) {
     case GET_USER:
     case CHECK_USER:
       return state
-        .set('hasLoaded', false)
         .set('loggedIn', false);
 
     case SAVE_ANSWER:
@@ -56,6 +56,7 @@ function appReducer(state = initialState, action = {}) {
       if (action.userData.data.message) {
         return state
           .set('hasLoaded', true)
+          .set('groups', [])
           .set('loggedIn', false);
       }
       return state
@@ -94,14 +95,18 @@ function appReducer(state = initialState, action = {}) {
         .set('groups', [])
         .set('loggedIn', false);
     }
-
+    case GET_USER_ERROR: {
+      return state
+        .set('error', 'De inloggegevens zijn onjuist!');
+    }
     // For now don't do anything when the action returns with an error
     // case GET_GROUPS_ERROR:
     case SAVE_ANSWER_ERROR:
     case CHECK_USER_ERROR:
-    case LOGOUT_ERROR:
-      return state;
-
+    case LOGOUT_ERROR: {
+      return state
+        .set('error', 'Er is geen verbinding met de server!');
+    }
     default:
       return state.set('groups', []);
   }

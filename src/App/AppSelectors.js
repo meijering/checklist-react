@@ -12,7 +12,8 @@ const getUser = () => createSelector(appSelector, theAppState => (theAppState ? 
 
 const getGroups = () => createSelector(appSelector, theAppState => (theAppState ? theAppState.get('groups') : []));
 const hasRegistered = () => createSelector(appSelector, theAppState => (theAppState ? theAppState.get('isRegistered') : ''));
+const errorMsg = () => createSelector(appSelector, theAppState => (theAppState ? theAppState.get('error') : null));
 
 export {
-  appSelector, userHasLoggedIn, getUser, getGroups, hasLoaded, hasRegistered,
+  errorMsg, appSelector, userHasLoggedIn, getUser, getGroups, hasLoaded, hasRegistered,
 };

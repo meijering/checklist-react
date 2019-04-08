@@ -13,9 +13,7 @@ import { createStructuredSelector } from 'reselect';
 import injectReducer from '../utils/injectReducer';
 import injectSaga from '../utils/injectSaga';
 
-import {
-  userHasLoggedIn, getUser, getGroups, hasLoaded, hasRegistered,
-} from './AppSelectors';
+import * as selectors from './AppSelectors';
 import * as ActionCreators from './AppActions';
 import reducer from './AppReducer';
 import saga from './AppSaga';
@@ -60,6 +58,12 @@ const Row = styled.div`
   margin-top: 50px;
 `;
 
+const Error = styled.div`
+  border: solid 1px red;
+  padding: 10px;
+  font-weight: bold;
+`;
+
 const AppImpl = (props) => {
   const {
     loggedIn,
@@ -71,12 +75,14 @@ const AppImpl = (props) => {
     saveAnswer,
     register,
     isRegistered,
+    hasLoaded,
+    error,
   } = props;
   useEffect(() => {
     checkUser();
   }, []);
 
-  return hasLoaded ? (
+  return (
     <div className="App">
       <AppBar user={user} loggedIn={loggedIn} logoutUser={logoutUser} />
       {loggedIn
@@ -108,14 +114,21 @@ const AppImpl = (props) => {
             Heb je nog geen inloggegevens? Klik dan op registeren. Vul de gevraagde gegevens
             in en ontvang binnen een  paar tellen je inloggegevens per mail.
           </p>
-          <Login
-            loginUser={loginUser}
-            logoutUser={logoutUser}
-            register={register}
-            registered={isRegistered}
-            user={user}
-            loggedIn={loggedIn}
-          />
+          {hasLoaded ? (
+            <Login
+              loginUser={loginUser}
+              logoutUser={logoutUser}
+              register={register}
+              registered={isRegistered}
+              user={user}
+              loggedIn={loggedIn}
+              error={error}
+            />
+          ) : (
+            <Error>
+              Er is geen verbinding met de server. Probeer het later nog eens!
+            </Error>
+          )}
           <p className="smaller">
             Voor een specifiek (locatie) advies, inspiratie tijdens een studiedag of voor een
             workshop kun je de Groene Giraf ook inschakelen. Neem voor de mogelijkheden of een
@@ -129,7 +142,7 @@ const AppImpl = (props) => {
         </Content>
         )}
     </div>
-  ) : null;
+  );
 };
 
 AppImpl.propTypes = {
@@ -142,14 +155,21 @@ AppImpl.propTypes = {
   user: PropTypes.shape().isRequired,
   groups: PropTypes.arrayOf(PropTypes.shape()).isRequired,
   saveAnswer: PropTypes.func.isRequired,
+  hasLoaded: PropTypes.bool.isRequired,
+  error: PropTypes.string,
+};
+
+AppImpl.defaultProps = {
+  error: null,
 };
 
 const mapStateToProps = createStructuredSelector({
-  user: getUser(),
-  groups: getGroups(),
-  loggedIn: userHasLoggedIn(),
-  hasLoaded: hasLoaded(),
-  isRegistered: hasRegistered(),
+  user: selectors.getUser(),
+  groups: selectors.getGroups(),
+  loggedIn: selectors.userHasLoggedIn(),
+  hasLoaded: selectors.hasLoaded(),
+  isRegistered: selectors.hasRegistered(),
+  error: selectors.errorMsg(),
 });
 
 export const mapDispatchToProps = dispatch => bindActionCreators(ActionCreators, dispatch);

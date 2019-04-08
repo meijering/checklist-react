@@ -35,6 +35,7 @@ const Login = ({
       loginUser(credentials);
     }
   };
+
   return (
     <LoginCard
       aria-labelledby="form-dialog-title"
@@ -82,7 +83,7 @@ Login.propTypes = {
 };
 
 Login.defaultProps = {
-  error: '',
+  error: null,
 };
 
 export default Login;
