@@ -20,7 +20,13 @@ const initialState = fromJS({
   hasLoaded: false,
   groups: [],
   isRegistered: '',
-  error: null,
+  errors: {
+    server: null,
+    login: null,
+    check: null,
+    register: null,
+    answer: null,
+  },
 });
 
 function appReducer(state = initialState, action = {}) {
@@ -30,23 +36,32 @@ function appReducer(state = initialState, action = {}) {
     //   return state.set('hasLoaded', false);
 
     case GET_USER:
-    case CHECK_USER:
       return state
+        .setIn(['error', 'login'], null)
         .set('loggedIn', false);
 
+    case CHECK_USER:
+      return state
+        .setIn(['error', 'check'], null);
+
     case SAVE_ANSWER:
+      return state
+        .setIn(['error', 'answer'], null);
+
     case LOGOUT:
       return state;
 
     case REGISTER_SUCCEED: {
       return state
-        .set('isRegistered', action.registerData.data.status);
+        .set('isRegistered', action.registerData.data.status)
+        .setIn(['error', 'register'], null);
     }
 
     // store the results of the action when succeeded.
     case GET_USER_SUCCEED: {
       localStorage.setItem('groups', JSON.stringify(action.groupData.data));
       return state
+        .setIn(['error', 'login'], null)
         .set('user', action.userData.data)
         .set('groups', action.groupData.data)
         .set('loggedIn', true);
@@ -55,11 +70,12 @@ function appReducer(state = initialState, action = {}) {
     case CHECK_USER_SUCCEED: {
       if (action.userData.data.message) {
         return state
+          .setIn(['error', 'check'], action.userData.data.message)
           .set('hasLoaded', true)
-          .set('groups', [])
-          .set('loggedIn', false);
+          .set('groups', []);
       }
       return state
+        .setIn(['error', 'check'], null)
         .set('user', action.userData.data)
         .set('groups', JSON.parse(localStorage.getItem('groups')))
         .set('hasLoaded', true)
@@ -86,6 +102,7 @@ function appReducer(state = initialState, action = {}) {
       });
       localStorage.setItem('groups', JSON.stringify(newGroups));
       return state
+        .setIn(['error', 'answer'], null)
         .set('groups', newGroups);
     }
     // store the results of the action when succeeded.
@@ -95,18 +112,23 @@ function appReducer(state = initialState, action = {}) {
         .set('groups', [])
         .set('loggedIn', false);
     }
-    case GET_USER_ERROR: {
+
+    case GET_USER_ERROR:
       return state
-        .set('error', 'De inloggegevens zijn onjuist!');
-    }
-    // For now don't do anything when the action returns with an error
-    // case GET_GROUPS_ERROR:
+        .setIn(['error', 'login'], 'De inloggegevens zijn onjuist!');
+
     case SAVE_ANSWER_ERROR:
-    case CHECK_USER_ERROR:
-    case LOGOUT_ERROR: {
       return state
-        .set('error', 'Er is geen verbinding met de server!');
-    }
+        .setIn(['error', 'answer'], 'Antwoord niet opgeslagen');
+
+    case CHECK_USER_ERROR:
+      return state
+        .setIn(['error', 'check'], 'Gebruiker ongeauthoriseerd');
+
+    case LOGOUT_ERROR:
+      return state
+        .setIn(['error', 'logout'], 'Uitloggen niet goedgegaan');
+
     default:
       return state.set('groups', []);
   }

@@ -1,5 +1,6 @@
 {
-  "name": "checklist-react",
+  "name": "dgg-checklist",
+  "description": "De Groene Giraf duurzaamheids checklist",
   "version": "0.1.0",
   "private": true,
   "dependencies": {
@@ -32,6 +33,7 @@
     "react-resize-detector": "^3.4.0",
     "react-spinners": "^0.5.4",
     "react-sweet-progress": "^1.1.2",
+    "react-toastify": "^5.0.0",
     "react-transition-group": "^2.5.3",
     "redux": "^4.0.1",
     "redux-immutable": "^4.0.0",
@@ -47,6 +49,7 @@
   },
   "scripts": {
     "start": "webpack-dev-server --open --config webpack.base.js --env.MODE=development",
+    "start:prod": "webpack-dev-server --open --config webpack.base.js --env.MODE=production",
     "build": "webpack --mode production --config webpack.base.js --env.MODE=production",
     "lighthouse:ci": "node_modules/lighthouse/lighthouse-cli/index.js --output-path=./lighthouse-report.html --quiet  --chrome-flags='--headless' http://localhost:3000",
     "lighthouse": "lighthouse --output-path=./lighthouse-report.html --quiet  --chrome-flags='--headless' http://localhost:3000",
@@ -124,7 +127,8 @@
     "webapp-webpack-plugin": "^2.6.0",
     "webpack-cli": "^3.2.3",
     "webpack-dev-server": "^3.1.14",
-    "webpack-pwa-manifest": "^4.0.0"
+    "webpack-pwa-manifest": "^4.0.0",
+    "workbox-webpack-plugin": "^4.2.0"
   },
   "browserslist": [
     ">0.2%",

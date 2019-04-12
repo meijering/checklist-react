@@ -4,8 +4,8 @@ const webpack = require('webpack');
 const WebpackCleanupPlugin = require('webpack-cleanup-plugin');
 const WebappWebpackPlugin = require('webapp-webpack-plugin');
 const CompressionPlugin = require('compression-webpack-plugin');
-// const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer');
 const TerserPlugin = require('terser-webpack-plugin');
+const WorkboxPlugin = require('workbox-webpack-plugin');
 
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 
@@ -55,14 +55,26 @@ module.exports = (env, options = {}) => ({
   plugins: [
     new WebpackCleanupPlugin(),
     new CompressionPlugin(),
-    new webpack.DefinePlugin({ 'process.env.MODE': JSON.stringify(env.MODE) }),
+    new webpack.DefinePlugin({
+      'process.env.MODE': JSON.stringify(env.MODE),
+      _API_: env.MODE === 'development' ? '\'http://localhost:3000\'' : '\'https://dgg-checklist.herokuapp.com\'',
+    }),
     new webpack.HotModuleReplacementPlugin(),
     new HtmlWebpackPlugin({
       template: './src/index.html',
       filename: 'index.html',
       inject: 'body',
     }),
-    new WebappWebpackPlugin('./src/assets/logo-max.png'),
+    new WebappWebpackPlugin({
+      logo: './src/assets/logo-max.png',
+      favicons: {
+        lang: 'nl-NL',
+        start_url: '/v2/index.html',
+        background_color: '#9de0ad',
+        theme_color: '#008025',
+      },
+    }),
+    new WorkboxPlugin.GenerateSW(),
   ],
   module: {
     rules: [

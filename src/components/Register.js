@@ -60,9 +60,9 @@ const Register = ({ register, registered }) => {
       <Dialog
         open={openRegister}
         onClose={handleClose}
-        aria-labelledby="form-dialog-title"
+        aria-labelledby="register"
       >
-        <DialogTitle id="form-dialog-title">Registreren</DialogTitle>
+        <DialogTitle id="register">Registreren</DialogTitle>
         {registered === 'OK' ? (
           <React.Fragment>
             <DialogContent>

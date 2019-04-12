@@ -3,12 +3,14 @@
  * Homepage page has log in, when logged in we collect all the data:
  * groups, questions, answers, etc. After that we can show the first page
  */
-import React, { useEffect } from 'react';
+import React, { useEffect, Suspense } from 'react';
 import PropTypes from 'prop-types';
 import styled from 'styled-components';
 import { connect } from 'react-redux';
 import { compose, bindActionCreators } from 'redux';
 import { createStructuredSelector } from 'reselect';
+import Card from '@material-ui/core/Card';
+import CircleLoader from 'react-spinners/CircleLoader';
 
 import injectReducer from '../utils/injectReducer';
 import injectSaga from '../utils/injectSaga';
@@ -18,10 +20,11 @@ import * as ActionCreators from './AppActions';
 import reducer from './AppReducer';
 import saga from './AppSaga';
 import Login from '../components/Login';
-import Groups from '../components/Groups';
 import AppBar from '../components/AppBar';
 import imageElement from '../assets/logo-max.png';
 import { media } from '../utils/media';
+
+const Groups = React.lazy(() => import('../components/Groups'));
 
 const Content = styled.div`
   padding: 30px 100px;
@@ -58,10 +61,18 @@ const Row = styled.div`
   margin-top: 50px;
 `;
 
-const Error = styled.div`
-  border: solid 1px red;
-  padding: 10px;
-  font-weight: bold;
+const Error = styled(Card)`
+  max-width: 600px;
+  height: 189px;
+  margin: 0 auto;
+  padding: 20px;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  &>* {
+    flex: 1 0 auto;
+  }
 `;
 
 const AppImpl = (props) => {
@@ -76,7 +87,7 @@ const AppImpl = (props) => {
     register,
     isRegistered,
     hasLoaded,
-    error,
+    errors,
   } = props;
   useEffect(() => {
     checkUser();
@@ -85,9 +96,11 @@ const AppImpl = (props) => {
   return (
     <div className="App">
       <AppBar user={user} loggedIn={loggedIn} logoutUser={logoutUser} />
-      {loggedIn
-        ? <Groups groups={groups} saveAnswer={saveAnswer} />
-        : (
+      {loggedIn ? (
+        <Suspense fallback={<div />}>
+          <Groups groups={groups} saveAnswer={saveAnswer} />
+        </Suspense>
+      ) : (
         <Content>
           <Row>
             <img src={imageElement} alt="logo" />
@@ -122,11 +135,12 @@ const AppImpl = (props) => {
               registered={isRegistered}
               user={user}
               loggedIn={loggedIn}
-              error={error}
+              error={errors.login}
             />
           ) : (
             <Error>
-              Er is geen verbinding met de server. Probeer het later nog eens!
+              <p>{errors.server || 'er wordt verbinding gemaakt met de server...'}</p>
+              {!errors.server && <CircleLoader color="#008025" />}
             </Error>
           )}
           <p className="smaller">
@@ -140,7 +154,7 @@ const AppImpl = (props) => {
 
           </p>
         </Content>
-        )}
+      )}
     </div>
   );
 };
@@ -156,11 +170,14 @@ AppImpl.propTypes = {
   groups: PropTypes.arrayOf(PropTypes.shape()).isRequired,
   saveAnswer: PropTypes.func.isRequired,
   hasLoaded: PropTypes.bool.isRequired,
-  error: PropTypes.string,
+  errors: PropTypes.shape(),
 };
 
 AppImpl.defaultProps = {
-  error: null,
+  errors: {
+    server: null,
+    login: null,
+  },
 };
 
 const mapStateToProps = createStructuredSelector({
@@ -169,7 +186,7 @@ const mapStateToProps = createStructuredSelector({
   loggedIn: selectors.userHasLoggedIn(),
   hasLoaded: selectors.hasLoaded(),
   isRegistered: selectors.hasRegistered(),
-  error: selectors.errorMsg(),
+  errors: selectors.errors(),
 });
 
 export const mapDispatchToProps = dispatch => bindActionCreators(ActionCreators, dispatch);

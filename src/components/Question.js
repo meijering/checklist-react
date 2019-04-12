@@ -91,10 +91,11 @@ const Question = ({ question, saveAnswer, showDetail }) => {
   useEffect(() => {
     setInProgress(false);
   }, [question]);
-  const lastAnswer = (question.answers
+
+  const lastAnswer = question.answers
     ? question.answers.sort((a, b) => new Date(b.ingevoerd_op) - new Date(a.ingevoerd_op))
       .map(a => a.antwoord)[0] === '1'
-    : false);
+    : false;
 
   const onChange = (e) => {
     setMore(e.target.value);

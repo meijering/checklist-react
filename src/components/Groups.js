@@ -3,7 +3,6 @@ import PropTypes from 'prop-types';
 import AnimateHeight from 'react-animate-height';
 import GroupItem from './GroupItem';
 import Question from './Question';
-// import ExpandingList from './ExpandingList/ExpandingList';
 
 const Groups = ({ groups, saveAnswer }) => {
   const initialGroups = groups.filter(group => group.thema === 1);

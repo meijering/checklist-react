@@ -59,8 +59,6 @@ export function* loginUser(action) {
 export function* checkLogin() {
   try {
     const userData = yield call(doCheckLogin);
-    // yield put(userChecked(userData));
-    console.log(userData.data.data);
     if (userData && !userData.data.message) {
       const groupData = yield call(getGroups);
       yield put(userLoggedIn(userData, groupData));

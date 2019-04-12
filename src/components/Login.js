@@ -14,6 +14,13 @@ const LoginCard = styled(Card)`
   margin: 0 auto;
 `;
 
+const Error = styled.div`
+  height: 1em;
+  font-weight: bold;
+  text-align: center;
+  color: red;
+`;
+
 const Login = ({
   loginUser, register, registered, error,
 }) => {
@@ -37,11 +44,11 @@ const Login = ({
   };
 
   return (
-    <LoginCard
-      aria-labelledby="form-dialog-title"
-    >
+    <LoginCard>
       <CardContent>
-        {error}
+        <Error>
+          {error}
+        </Error>
         <TextField
           autoFocus
           margin="dense"
@@ -55,6 +62,7 @@ const Login = ({
         />
         <TextField
           type="password"
+          id="password"
           name="password"
           label="wachtwoord"
           value={credentials.password}

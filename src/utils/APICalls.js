@@ -1,8 +1,7 @@
 import axios from 'axios';
 
 axios.defaults.withCredentials = true;
-const base = 'https://dgg-checklist.herokuapp.com';
-// const base = 'http://localhost:3000';
+const base = _API_; // eslint-disable-line no-undef
 
 /**
  * login to the application
