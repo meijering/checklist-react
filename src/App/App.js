@@ -41,6 +41,8 @@ const Content = styled.div`
   }
   & a {
     color: green;
+    padding-left: 0.3em;
+    padding-right: 0.3em;
   }
   ${media.phone`
     padding: 12px;
