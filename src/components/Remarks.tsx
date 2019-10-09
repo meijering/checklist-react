@@ -1,7 +1,7 @@
-import React from 'react';
-import { arrayOf, shape } from 'prop-types';
-import styled from 'styled-components';
-import { TextField } from '@material-ui/core';
+import React from 'react'
+import styled from 'styled-components'
+import { TextField } from '@material-ui/core'
+import { Remark } from '../overmind/state'
 
 const Item = styled.div`
   display: flex;
@@ -9,20 +9,23 @@ const Item = styled.div`
 `;
 const Label = styled.div`
   width: 100px;
-`;
+`
 
-const convertDate = (d) => {
-  const date = d ? new Date(d) : new Date();
-  // console.log(d.getDate());
+const convertDate = (d?: Date | null) => {
+  const date = d ? new Date(d) : new Date()
   return (
     [
       `00${date.getDate()}`.slice(-2),
       `00${date.getMonth() + 1}`.slice(-2),
       date.getFullYear(),
-    ].join('-'));
-};
+    ].join('-'))
+}
 
-const Remarks = ({ remarks }) => (
+interface RemarkProps {
+  remarks: Remark[],
+}
+
+const Remarks: React.FC<RemarkProps> = ({ remarks }) => (
   <React.Fragment>
     {remarks.map(remark => (
       <Item key={`remark-${remark.opmerking_id}`}>
@@ -35,10 +38,6 @@ const Remarks = ({ remarks }) => (
       <TextField rows="4" multiline fullWidth value="" variant="outlined" />
     </Item>
   </React.Fragment>
-);
+)
 
-Remarks.propTypes = {
-  remarks: arrayOf(shape()).isRequired,
-};
-
-export default Remarks;
+export default Remarks

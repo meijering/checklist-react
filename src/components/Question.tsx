@@ -1,19 +1,21 @@
-import React, { useState, useEffect } from 'react';
-import PropTypes from 'prop-types';
-import styled from 'styled-components';
-import Checkbox from '@material-ui/core/Checkbox';
-import FormControlLabel from '@material-ui/core/FormControlLabel';
-import { TextField } from '@material-ui/core';
-import { Icon } from 'react-icons-kit';
+import React, { useState, useEffect, ChangeEvent } from 'react'
+import PropTypes from 'prop-types'
+import styled from 'styled-components'
+import Checkbox from '@material-ui/core/Checkbox'
+import FormControlLabel from '@material-ui/core/FormControlLabel'
+import { TextField } from '@material-ui/core'
+import { Icon } from 'react-icons-kit'
 /* eslint-disable camelcase */
-import { ic_lightbulb_outline } from 'react-icons-kit/md/ic_lightbulb_outline';
-import { ic_comment } from 'react-icons-kit/md/ic_comment';
+import { ic_lightbulb_outline } from 'react-icons-kit/md/ic_lightbulb_outline'
+import { ic_comment } from 'react-icons-kit/md/ic_comment'
 /* eslint-enable camelcase */
-import AnimateHeight from 'react-animate-height';
-import ScaleLoader from 'react-spinners/ScaleLoader';
+import AnimateHeight from 'react-animate-height'
+import ScaleLoader from 'react-spinners/ScaleLoader'
 
-import { media } from '../utils/media';
-import Remarks from './Remarks';
+import { useOvermind } from '../overmind'
+import { Question } from '../overmind/state'
+import { media } from '../utils/media'
+import Remarks from './Remarks'
 
 const Loader = styled.div`
   position: absolute;
@@ -21,7 +23,7 @@ const Loader = styled.div`
   z-index: 2;
   display: block;
   margin: 0 auto;
-`;
+`
 
 const Bar = styled.div`
   display: flex;
@@ -32,7 +34,7 @@ const Bar = styled.div`
   ${media.phone`
     height: auto;
   `}
-`;
+`
 
 const Check = styled(Checkbox)`
   flex: 0 0 auto;
@@ -44,7 +46,7 @@ const Check = styled(Checkbox)`
     width: 1.5em;
     fill: #008025;
   }
-`;
+`
 
 const QuestionBox = styled.div`
   display: inline-flex;
@@ -52,65 +54,66 @@ const QuestionBox = styled.div`
   & span {
     font-size: 18px;
   }
-`;
+`
 
 export const QuestionInfo = styled(AnimateHeight)`
   ${media.phone`
     display: none;
   `}
-`;
+`
 
 const InfoContainer = styled.div`
   display: flex;
   flex-direction: row;
   min-height: 60vh;
-`;
+`
 
 const Tip = styled.div`
   margin-bottom: 5px;
-`;
+`
 
 const Navigator = styled.div`
   display: flex;
   flex: 0 0 40px;
   flex-direction: column;
   align-items: center;
-`;
+`
+
 const InfoContent = styled.div`
   flex: 0 0 90%;
-`;
+`
 
-const setLastAnswer = question => (question.answers
-  ? question.answers.sort((a, b) => new Date(b.ingevoerd_op) - new Date(a.ingevoerd_op))
-    .map(a => a.antwoord)[0]
-  : '');
+const setLastAnswer = (question: Question) => (question.answers
+  ? question.answers.map(a => a.antwoord)[0]
+  : '')
 
-const Question = ({ question, saveAnswer, showDetail }) => {
-  const [more, setMore] = useState(setLastAnswer(question));
-  const [inProgress, setInProgress] = useState(false);
-  useEffect(() => {
-    setInProgress(false);
-  }, [question]);
+interface QuestionProps {
+  question: Question,
+  saveAnswer: () => void,
+  showDetail?: boolean,
+}
+  
+const QuestionEl: React.FC<QuestionProps> = ({ question, saveAnswer, showDetail = false }) => {
+  const { state, actions } = useOvermind()
+  const [more, setMore] = useState(setLastAnswer(question))
 
   const lastAnswer = question.answers
-    ? question.answers.sort((a, b) => new Date(b.ingevoerd_op) - new Date(a.ingevoerd_op))
-      .map(a => a.antwoord)[0] === '1'
-    : false;
+    ? question.answers.map(a => a.antwoord)[0] === '1'
+    : false
 
-  const onChange = (e) => {
-    setMore(e.target.value);
-  };
+  const onChange = (e: ChangeEvent<HTMLInputElement>): void => {
+    setMore(e.currentTarget.value)
+  }
 
   const saveCheck = () => {
-    setInProgress(true);
-    saveAnswer(question.vraag_id, lastAnswer ? '' : '1');
-  };
+    actions.saveAnswer({ question: question.vraag_id, answer: lastAnswer ? '' : '1' })
+  }
 
   const saveThis = () => {
     if (more !== setLastAnswer(question)) {
-      saveAnswer(question.vraag_id, more);
+      actions.saveAnswer({ question: question.vraag_id, answer: more })
     }
-  };
+  }
 
   /* eslint-disable camelcase */
   return (
@@ -126,7 +129,7 @@ const Question = ({ question, saveAnswer, showDetail }) => {
               height={24}
               margin="2px"
               color="#008025"
-              loading={inProgress}
+              loading={state.isSaving === question.vraag_id}
             />
           </Loader>
           <FormControlLabel
@@ -135,7 +138,7 @@ const Question = ({ question, saveAnswer, showDetail }) => {
                 checked={lastAnswer}
                 onChange={() => saveCheck()}
                 value="1"
-                disabled={inProgress}
+                disabled={!!state.isSaving}
               />
               )}
             label={question.vraag}
@@ -166,16 +169,6 @@ const Question = ({ question, saveAnswer, showDetail }) => {
       )}
     </React.Fragment>
   );
-};
+}
 
-Question.propTypes = {
-  question: PropTypes.shape().isRequired,
-  saveAnswer: PropTypes.func.isRequired,
-  showDetail: PropTypes.bool,
-};
-
-Question.defaultProps = {
-  showDetail: false,
-};
-
-export default Question;
+export default QuestionEl

@@ -1,58 +1,65 @@
-import React, { useState, useEffect } from 'react';
-import PropTypes from 'prop-types';
-import styled from 'styled-components';
+import React, { useState, useEffect, FormEvent, MouseEvent } from 'react'
+import PropTypes from 'prop-types'
+import styled from 'styled-components'
+import { useOvermind } from '../overmind'
 
-import Button from '@material-ui/core/Button';
-import TextField from '@material-ui/core/TextField';
-import Dialog from '@material-ui/core/Dialog';
-import DialogActions from '@material-ui/core/DialogActions';
-import DialogContent from '@material-ui/core/DialogContent';
-import DialogContentText from '@material-ui/core/DialogContentText';
-import DialogTitle from '@material-ui/core/DialogTitle';
+import Button from '@material-ui/core/Button'
+import TextField from '@material-ui/core/TextField'
+import Dialog from '@material-ui/core/Dialog'
+import DialogActions from '@material-ui/core/DialogActions'
+import DialogContent from '@material-ui/core/DialogContent'
+import DialogContentText from '@material-ui/core/DialogContentText'
+import DialogTitle from '@material-ui/core/DialogTitle'
+import { ActionSheetIOS } from 'react-native'
 
 const But = styled.span`
   cursor: pointer;
   color: green;
   text-decoration: underline;
-`;
+`
 
-const Register = ({ register, registered }) => {
-  const [openRegister, setOpenRegister] = useState(false);
-  const [error, setError] = useState('');
-  const [credentials, setCredentials] = useState({
+interface RegisterProps {
+  registered: string,
+}
+
+const Register: React.FC<RegisterProps> = ({ registered }) => {
+  const { actions } = useOvermind()
+  const [openRegister, setOpenRegister] = useState(false)
+  const [error, setError] = useState('')
+  const [registerData, setRegisterData] = useState({
     email: '',
     name: '',
-  });
+  })
 
   useEffect(() => {
     if (registered === 'NOK') {
-      setError('Dit e-mailadres kon niet worden regegistreerd');
+      setError('Dit e-mailadres kon niet worden regegistreerd')
     }
-  }, [registered]);
+  }, [registered])
 
-  const onChange = (e) => {
-    e.persist();
-    setCredentials({
-      ...credentials,
-      ...{ [e.target.name]: e.target.value },
-    });
-  };
+  const onChange = (e: FormEvent<HTMLInputElement>): void => {
+    const safeInputValue: string = e.currentTarget.value
+    e.persist()
+    setRegisterData({
+      ...registerData,
+      ...{ [e.currentTarget.name]: safeInputValue },
+    })
+  }
 
   const handleClickOpen = () => {
-    setOpenRegister(true);
-  };
+    setOpenRegister(true)
+  }
 
   const handleClose = () => {
-    setOpenRegister(false);
-  };
+    setOpenRegister(false)
+  }
 
-  const validateAndSendData = (e) => {
-    e.preventDefault();
-    e.persist();
-    if (credentials.email && credentials.name) {
-      register(credentials);
+  const validateAndSendData = (e: MouseEvent): void => {
+    e.preventDefault()
+    if (registerData.email && registerData.name) {
+      actions.doRegister(registerData)
     }
-  };
+  }
 
   return (
     <React.Fragment>
@@ -85,16 +92,20 @@ const Register = ({ register, registered }) => {
                     name="email"
                     label="E-mailadres"
                     type="email"
-                    value={credentials.email}
-                    onChange={onChange}
+                    value={registerData.email}
+                    inputProps={{
+                      onChange: onChange,
+                    }}
                     fullWidth
                   />
                   <TextField
                     type="text"
                     name="name"
                     label="Naam"
-                    value={credentials.name}
-                    onChange={onChange}
+                    value={registerData.name}
+                    inputProps={{
+                      onChange: onChange,
+                    }}
                     fullWidth
                   />
             </DialogContent>
@@ -110,12 +121,7 @@ const Register = ({ register, registered }) => {
         )}
       </Dialog>
     </React.Fragment>
-  );
-};
+  )
+}
 
-Register.propTypes = {
-  register: PropTypes.func.isRequired,
-  registered: PropTypes.string.isRequired,
-};
-
-export default Register;
+export default Register

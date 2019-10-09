@@ -1,17 +1,12 @@
-import '@babel/polyfill';
-import React from 'react';
-import ReactDOM from 'react-dom';
-import { Provider } from 'react-redux';
-import { MuiThemeProvider, createMuiTheme } from '@material-ui/core/styles';
-import configureStore from './configureStore';
-import App from './App/App'; // eslint-disable-line import/no-named-as-default
-import StoreContext from './utils/storeContext';
-
-
+import '@babel/polyfill'
+import * as React from 'react'
+import * as ReactDOM from 'react-dom'
+import { createOvermind } from 'overmind'
+import { Provider } from 'overmind-react'
+import { MuiThemeProvider, createMuiTheme } from '@material-ui/core/styles'
+import App from './App/App' // eslint-disable-line import/no-named-as-default
+import { config } from './overmind'
 // The initial state of the App
-const initialState = {};
-
-const store = configureStore(initialState);
 const breakpointValues = {
   // keep first breakpoint at zero instead of 322px, see spec material ui breakpoints at https://github.com/mui-org/material-ui/blob/master/packages/material-ui/src/styles/createBreakpoints.js
   xs: 0,
@@ -19,7 +14,7 @@ const breakpointValues = {
   md: 768,
   lg: 992,
   xl: 1200,
-};
+}
 
 const gridAdjustments = createMuiTheme({
   typography: {
@@ -36,17 +31,17 @@ const gridAdjustments = createMuiTheme({
     },
     // error: will use the default color
   },
+})
 
-});
+const overmind = createOvermind(config, { devtools: true })
+
 const MOUNT_NODE = document.getElementById('root');
 ReactDOM.render(
-  <MuiThemeProvider theme={gridAdjustments}>
-    <Provider store={store}>
-      <StoreContext.Provider value={store}>
-        <App />
-      </StoreContext.Provider>
-    </Provider>
-  </MuiThemeProvider>,
-  MOUNT_NODE,
+  <Provider value={overmind}>
+    <MuiThemeProvider theme={gridAdjustments}>
+      <App />
+    </MuiThemeProvider>
+  </Provider>,
+  MOUNT_NODE
 );
 // registerServiceWorker();

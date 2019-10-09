@@ -11,7 +11,7 @@ const HtmlWebpackPlugin = require('html-webpack-plugin');
 
 module.exports = (env, options = {}) => ({
   entry: {
-    main: './src/index.js',
+    main: './src/index.tsx',
   },
   output: {
     path: path.resolve(__dirname, './dist'),
@@ -57,7 +57,7 @@ module.exports = (env, options = {}) => ({
     new CompressionPlugin(),
     new webpack.DefinePlugin({
       'process.env.MODE': JSON.stringify(env.MODE),
-      _API_: env.MODE === 'development' ? '\'http://localhost:3000\'' : '\'https://dgg-checklist.herokuapp.com\'',
+      _API_: env.MODE === 'devellopment' ? '\'http://localhost:3000\'' : '\'https://dgg-checklist.herokuapp.com\'',
     }),
     new webpack.HotModuleReplacementPlugin(),
     new HtmlWebpackPlugin({
@@ -78,6 +78,15 @@ module.exports = (env, options = {}) => ({
   ],
   module: {
     rules: [
+      {
+        test: /\.ts(x?)$/,
+        exclude: /node_modules/,
+        use: [
+          {
+            loader: 'ts-loader',
+          },
+        ],
+      },
       {
         test: /\.js$/,
         exclude: [
@@ -153,6 +162,7 @@ module.exports = (env, options = {}) => ({
     ],
   },
   resolve: {
+    extensions: ['.tsx', '.ts', '.js'],
     modules: ['src', 'node_modules'],
     alias: {
       ...(options.resolve ? options.resolve.alias : {}),
