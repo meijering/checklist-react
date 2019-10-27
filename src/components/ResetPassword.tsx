@@ -1,4 +1,5 @@
 import React, { useState, FormEvent, MouseEvent } from 'react'
+import { RouteComponentProps } from '@reach/router'
 import styled from 'styled-components'
 import { useOvermind } from '../overmind'
 
@@ -7,7 +8,7 @@ import TextField from '@material-ui/core/TextField'
 import Card from '@material-ui/core/Card'
 import CardActions from '@material-ui/core/CardActions'
 import CardContent from '@material-ui/core/CardContent'
-import ForgotPassword from './ForgotPassword'
+import Register from './Register'
 
 const LoginCard = styled(Card)`
   max-width: 600px;
@@ -21,27 +22,36 @@ const Error = styled.div`
   color: red;
 `;
 
-const Login: React.FC = () => {
+interface FPProps {
+  userId: string,
+  token: string,
+}
+
+const ResetPassword: React.FC<RouteComponentProps<FPProps>> = ({ userId, token }) => {
   const { state, actions } = useOvermind()
   const registered = ''
 
-  const [credentials, setCredentials] = useState({
-    username: '',
+  const [passwords, setPasswords] = useState({
     password: '',
+    passwordConfirmed: '',
   })
 
   const onChange = (e: FormEvent<HTMLInputElement>): void => {
     const safeInputValue: string = e.currentTarget.value
-    setCredentials({
-      ...credentials,
+    setPasswords({
+      ...passwords,
       ...{ [e.currentTarget.name]: safeInputValue },
     })
   }
 
   const validateAndSendData = (e: MouseEvent): void => {
     e.preventDefault();
-    if (credentials.username && credentials.password) {
-      actions.doLogin(credentials)
+    if (userId && token && passwords.password && passwords.password === passwords.passwordConfirmed) {
+      actions.changePassword({
+        userId,
+        password: passwords.password,
+        token,
+      })
     }
   }
 
@@ -54,11 +64,11 @@ const Login: React.FC = () => {
         <TextField
           autoFocus
           margin="dense"
-          id="name"
-          name="username"
-          label="e-mailadres"
-          type="email"
-          value={credentials.username}
+          id="password"
+          name="password"
+          label="Nieuw wachtwoord"
+          type="password"
+          value={passwords.password}
           inputProps={{
             onChange: onChange,
           }}
@@ -66,10 +76,10 @@ const Login: React.FC = () => {
         />
         <TextField
           type="password"
-          id="password"
-          name="password"
-          label="wachtwoord"
-          value={credentials.password}
+          id="passwordConfirmed"
+          name="passwordConfirmed"
+          label="bevestig wachtwoord"
+          value={passwords.passwordConfirmed}
           inputProps={{
             onChange: onChange,
           }}
@@ -79,16 +89,14 @@ const Login: React.FC = () => {
       <CardActions>
         <Button
           variant="outlined"
-          disabled={!(credentials.username && credentials.password)}
           onClick={validateAndSendData}
           color="primary"
         >
-          Inloggen
+          Verzenden
         </Button>
-        <ForgotPassword />
       </CardActions>
     </LoginCard>
   )
 }
 
-export default Login
+export default ResetPassword

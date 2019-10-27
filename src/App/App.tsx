@@ -5,6 +5,7 @@
  */
 import * as React from 'react'
 import { useEffect } from 'react'
+import { RouteComponentProps } from '@reach/router'
 import styled from 'styled-components'
 import Card from '@material-ui/core/Card'
 import CircleLoader from 'react-spinners/CircleLoader'
@@ -12,12 +13,20 @@ import { ToastContainer, toast } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
 
 import { useOvermind } from '../overmind'
-import imageElement from '../assets/logo-max.png';
+import imageElement from '../assets/logo-max.png'
 import Login from '../components/Login'
 import AppBar from '../components/AppBar'
+import Register from '../components/Register'
+import Privacy from '../components/Privacy'
 import { media } from '../utils/media'
 
 const Groups = React.lazy(() => import('../components/Groups'))
+
+const AppContainer = styled.div`
+    position: relative;
+    padding-bottom: 4em;
+    min-height: calc(100vh - 4em);
+`
 
 const Content = styled.div`
   padding: 30px 100px;
@@ -69,8 +78,7 @@ const Error = styled(Card)`
     flex: 1 0 auto;
   }
 `
-
-const App: React.FC = () => {
+const App: React.FC<RouteComponentProps> = () => {
   const { state, actions } = useOvermind()
 
   useEffect(() => {
@@ -78,13 +86,14 @@ const App: React.FC = () => {
   }, [])
 
   useEffect(() => {
-    if (state.error) {
+    if (Object.keys(state.error).length > 0) {
+      console.log(state.error)
       toast(state.error.login)
     }
   }, [state.error])
 
   return (
-    <div className="App">
+    <AppContainer>
       <AppBar />
       {state.isLoggedIn ? (
         <React.Suspense fallback={<div />}>
@@ -95,28 +104,12 @@ const App: React.FC = () => {
           <Row>
           <img src={imageElement} alt="logo" />
             <h1>
-              Welkom bij de duurzame checklist
-              <br />
-              van de Groene Giraf!
+              Welkom
             </h1>
           </Row>
           <Row>
-            <p><strong>Wil je:</strong></p>
-            <ul>
-              <li>Bewustert omgaan met grondstoffen?</li>
-              <li>Een natuurlijke, gifvrije omgeving creëren?</li>
-              <li>Een kleinere ecologische voetafdruk zetten?</li>
-              <li>Je gedrag verduurzamen?</li>
-            </ul>
+            <Register />
           </Row>
-          <p>
-            Log in en ontdek snel waar jouw kansen liggen om bij te dragen aan een mooiere,
-            schone en voor iedereen welvarende toekomst!
-          </p>
-          <p>
-            Heb je nog geen inloggegevens? Klik dan op registeren. Vul de gevraagde gegevens
-            in en ontvang binnen een  paar tellen je inloggegevens per mail.
-          </p>{state.hasLoaded}
           {state.hasLoaded ? (
             <Login />
           ) : (
@@ -128,20 +121,12 @@ const App: React.FC = () => {
               {!('server' in state.error) && <CircleLoader color="#008025" />}
             </Error>
           )}
-          <p className="smaller">
-            Voor een specifiek (locatie) advies, inspiratie tijdens een studiedag of voor een
-            workshop kun je de Groene Giraf ook inschakelen. Neem voor de mogelijkheden of een
-            vrijblijvende offerte contact op met Ilse Vlaming, initiatiefnemer van de Groene Giraf
-            via
-            <a href="tel:06 41 848 766">06 41 848 766</a>
-            of
-            <a href="mailto:info@degroenegiraf.nl">info@degroenegiraf.nl</a>
-
-          </p>
+        
         </Content>
       )}
+      <Privacy />
       <ToastContainer />
-    </div>
+    </AppContainer>
   )
 }
 

@@ -1,44 +1,70 @@
-import { AsyncAction } from 'overmind'
-import { RegisterData, Credentials } from './state'
+import { Action, AsyncAction } from 'overmind'
+import { RegisterData, PasswordData, Credentials } from './state'
 import { async } from 'q'
+
+type Message = {
+  code: string,
+  message: string,
+}
+
+const messages: Message[] = [
+  { code: '', message: '' },
+  { code: 'R00', message: 'Je bent geregistreerd. Je ontvangt een E-mail waarin je inloggegevens staan.' },
+  { code: 'R01', message: 'Dit adres is al bekend maar is niet geactiveerd.' },
+  { code: 'R02', message: 'Dit adres is al geregistreed. Als je je wachtwoord bent vergeten, kun je een nieuw wachtwoord opvragen.' },
+  { code: 'P00', message: 'Er is een mail naar je toegestuurd met instructies om je wachtwoord te wijzigen.' },
+]
 
 export const checkLogin: AsyncAction = async ({ effects, state }) => {
   const isLoggedIn = await effects.api.checkLoggedIn()
-  // const groups = JSON.parse(localStorage.getItem('groups'))
-  if (isLoggedIn.data.message) {
-    state.error.check = isLoggedIn.data.message
-  } else {
-    state.error.check = undefined
-    state.user = isLoggedIn.data
+  if (isLoggedIn) {
+    state.user = isLoggedIn
     const groups = await effects.api.getGroups()
     state.groups = groups
     state.isLoggedIn = true
   }
   state.hasLoaded = true
 }
+export const doSendPwd: AsyncAction<string> = async ({ effects, state }, email) => {
+  state.passwordSent = false
+  const pwSent = await effects.api.askForPassword(email)
+  const thisMessage = messages.find(m => m.code === pwSent) || messages[0]
+  state.message = thisMessage.message
+  state.passwordSent = true
+}
 
-export const doRegister: AsyncAction<RegisterData> = async ({ effects, state }, registerData) => {
+export const releaseSendPwd: Action = ({ effects, state }) => {
+  state.passwordSent = false
+}
+
+export const doRegister: AsyncAction<RegisterData> = async ({ effects, state }, registerData) => {  
+  state.isRegistered = false
   const userData = await effects.api.setCredentials(registerData)
-  // const groups = JSON.parse(localStorage.getItem('groups'))
-  if (userData.data.message) {
-    state.error.login = userData.data.message
+  const thisMessage = messages.find(m => m.code === userData) || messages[0]
+  state.message = thisMessage.message
+  state.isRegistered = true
+}
+
+export const releaseRegister: Action = ({ effects, state }) => {
+  state.isRegistered = false
+}
+
+export const changePassword: AsyncAction<PasswordData> = async ({ effects, state }, passwordData) => {
+  const pwData = await effects.api.setPassword(passwordData)
+  if (pwData.data.message) {
+    state.error.server = pwData.data.message
   } else {
-    state.error.login = undefined
-    state.user = userData.data
-    const groups = await effects.api.getGroups()
-    state.groups = groups
-    state.isLoggedIn = true
+    state.error.server = undefined
   }
 }
 
 export const doLogin: AsyncAction<Credentials> = async ({ effects, state }, credentials) => {
   const userData = await effects.api.getUser(credentials)
-  // const groups = JSON.parse(localStorage.getItem('groups'))
-  if (userData.data.message) {
-    state.error.login = userData.data.message
+  if (userData.message) {
+    state.error.login = userData.message
   } else {
     state.error.login = undefined
-    state.user = userData.data
+    state.user = userData
     const groups = await effects.api.getGroups()
     state.groups = groups
     state.isLoggedIn = true

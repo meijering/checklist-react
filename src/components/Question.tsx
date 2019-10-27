@@ -1,5 +1,4 @@
 import React, { useState, useEffect, ChangeEvent } from 'react'
-import PropTypes from 'prop-types'
 import styled from 'styled-components'
 import Checkbox from '@material-ui/core/Checkbox'
 import FormControlLabel from '@material-ui/core/FormControlLabel'

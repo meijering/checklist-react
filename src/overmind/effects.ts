@@ -1,5 +1,5 @@
 import axios from 'axios'
-import { Credentials, RegisterData, Group, Question } from './state'
+import { Credentials, RegisterData, PasswordData, Group, Question } from './state'
 
 const base = process.env.REACT_APP_API
 axios.defaults.withCredentials = true;
@@ -9,27 +9,67 @@ interface Answer {
 }
 export const api = {
   setCredentials: async (registerData: RegisterData): Promise<any> => {
+    try {
+      const result = await axios({
+        method: 'POST',
+        url: `${base}/register`,
+        data:  registerData,
+      })
+      return result.data.code
+    } catch(e) {
+      console.log(e.response)
+      return e.response.data.code
+    }
+  },
+  checkLoggedIn: async (): Promise<any> => {
+    try {
+      const checked = await axios({
+        method: 'GET',
+        url: `${base}/auth/check`,
+      })
+      return checked.data
+    } catch(e) {
+      return null;
+    }
+  },
+  setPassword: async ({ userId, password, token }: PasswordData ): Promise<any> => {
     const result = await axios({
       method: 'POST',
-      url: `${base}/register`,
-      data:  registerData,
+      url: `${base}/auth/store-password`,
+      data: {
+        userId: userId,
+        password: password,
+        token: token,
+      },
     })
     return result
   },
-  checkLoggedIn: async (): Promise<any> => {
-    const checked = await axios({
-      method: 'GET',
-      url: `${base}/auth/check`,
-    })
-    return checked
+  askForPassword: async (email: string): Promise<any> => {
+    try {
+      const result = await axios({
+        method: 'POST',
+        url: `${base}/auth/reset-password`,
+        data: {
+          email,
+        },
+      })
+      return 'P00'
+    } catch(e) {
+      console.log(e.response)
+      return e.response.data.code
+    }
   },
   getUser: async (credentials: Credentials): Promise<any> => {
-    const userData = await axios({
-      method: 'POST',
-      url: `${base}/auth/login`,
-      data: credentials,
-    })
-    return userData
+    try {
+      const userData = await axios({
+        method: 'POST',
+        url: `${base}/auth/login`,
+        data: credentials,
+      })
+      return userData.data
+    } catch(e) {
+      return { message: 'De combinatie van e-mail adres en wachtwoord is niet bekend' }
+    }
   },
   doLogout: async (): Promise<void> => {
     await axios({

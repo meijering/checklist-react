@@ -1,6 +1,5 @@
 import React, { useState, MouseEvent } from 'react'
 import { useOvermind } from '../overmind'
-import PropTypes from 'prop-types'
 import styled from 'styled-components'
 import AppBar from '@material-ui/core/AppBar'
 import IconButton from '@material-ui/core/IconButton'
@@ -13,10 +12,11 @@ import imageElement from '../assets/logo-max.png'
 const Toolbar = styled.div`
   max-width: 1000px;
   width: calc(100% - 5px);
-  margin: 5px auto;
+  margin: 0px auto;
   display: flex;
   justify-content: space-between;
   align-items: center;
+  font-family: sans-serif;
 `
 
 const Title = styled.div`
@@ -28,14 +28,25 @@ const Title = styled.div`
   font-family: sans-serif;
   ${media.phone`
     margin-left: 12px;
+    font-size: 15px;
   `}
+`
+const Span = styled.span`
+  padding: 20px 0;
 `
 
 const Img = styled.img`
-  height: 55px;
+  height: 50px;
   background-color: #ffffff;
   border-radius: 50%;
   margin: 5px;
+  padding: 5px;
+  ${media.phone`
+    display: none;
+  `}
+`
+
+const Name = styled.span`
   ${media.phone`
     display: none;
   `}
@@ -65,11 +76,13 @@ const MenuAppBar: React.FC = () => {
       <Toolbar>
         <Title>
           {state.isLoggedIn && <Img src={imageElement} alt="logo" />}
-          <span>checklist</span>
+          <Span>Duurzaamheid checklist van de Groene Giraf</Span>
         </Title>
         {state.isLoggedIn && (
           <div>
-            {state.user && 'naam' in state.user && state.user.naam}
+            <Name>
+              {state.user && 'naam' in state.user && state.user.naam}
+            </Name>
             <IconButton
               aria-owns={open ? 'menu-appbar' : undefined}
               aria-haspopup="true"
@@ -92,7 +105,6 @@ const MenuAppBar: React.FC = () => {
               open={open}
               onClose={handleClose}
             >
-              <MenuItem onClick={handleClose}>Mijn gegevens</MenuItem>
               <MenuItem onClick={handleLogOut}>Uitloggen</MenuItem>
             </Menu>
           </div>

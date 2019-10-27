@@ -1,10 +1,12 @@
 import '@babel/polyfill'
 import * as React from 'react'
 import * as ReactDOM from 'react-dom'
+import { Router } from "@reach/router"
 import { createOvermind } from 'overmind'
 import { Provider } from 'overmind-react'
 import { MuiThemeProvider, createMuiTheme } from '@material-ui/core/styles'
 import App from './App/App' // eslint-disable-line import/no-named-as-default
+import ResetPassword from './components/ResetPassword'
 import { config } from './overmind'
 // The initial state of the App
 const breakpointValues = {
@@ -39,7 +41,10 @@ const MOUNT_NODE = document.getElementById('root');
 ReactDOM.render(
   <Provider value={overmind}>
     <MuiThemeProvider theme={gridAdjustments}>
-      <App />
+      <Router>
+        <App path="/" />
+        <ResetPassword path="/reset/:userId/:token" />
+      </Router>
     </MuiThemeProvider>
   </Provider>,
   MOUNT_NODE

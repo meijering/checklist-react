@@ -1,5 +1,4 @@
 import React, { useState } from 'react'
-import PropTypes from 'prop-types'
 import styled, { StyledFunction } from 'styled-components'
 import { Progress } from 'react-sweet-progress'
 import AnimateHeight from 'react-animate-height'

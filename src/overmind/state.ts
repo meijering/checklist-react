@@ -10,6 +10,12 @@ export type RegisterData = {
   name: string,
 }
 
+export type PasswordData = {
+  userId: string,
+  password: string,
+  token: string,
+}
+
 export type User = {
   gebruiker_id: number,
   naam: string,
@@ -68,7 +74,11 @@ export type Error = {
 
 export type State = {
   theme: number,
+  waiting: boolean,
   isLoggedIn: boolean,
+  passwordSent: boolean,
+  isRegistered: boolean,
+  message?: string,
   user?: User,
   hasLoaded: boolean,
   isSaving?: number,
@@ -78,7 +88,10 @@ export type State = {
 }
 
 export const state: State = {
+  waiting: false,
+  passwordSent: false,
   isLoggedIn: false,
+  isRegistered: false,
   hasLoaded: false,
   theme: 1,
   error: {},

@@ -1,5 +1,4 @@
 import React, { useState, useEffect, FormEvent, MouseEvent } from 'react'
-import PropTypes from 'prop-types'
 import styled from 'styled-components'
 import { useOvermind } from '../overmind'
 
@@ -10,32 +9,29 @@ import DialogActions from '@material-ui/core/DialogActions'
 import DialogContent from '@material-ui/core/DialogContent'
 import DialogContentText from '@material-ui/core/DialogContentText'
 import DialogTitle from '@material-ui/core/DialogTitle'
-import { ActionSheetIOS } from 'react-native'
 
 const But = styled.span`
   cursor: pointer;
   color: green;
-  text-decoration: underline;
+  &::before {
+    content: ' ';
+  }
+  &::after {
+    content: ' ';
+  }
+  & span {
+    text-decoration: underline;
+  }
 `
 
-interface RegisterProps {
-  registered: string,
-}
-
-const Register: React.FC<RegisterProps> = ({ registered }) => {
-  const { actions } = useOvermind()
+const Register: React.FC = () => {
+  const { state, actions } = useOvermind()
   const [openRegister, setOpenRegister] = useState(false)
-  const [error, setError] = useState('')
+  const [disabled, setDisabled] = useState(false)
   const [registerData, setRegisterData] = useState({
     email: '',
     name: '',
   })
-
-  useEffect(() => {
-    if (registered === 'NOK') {
-      setError('Dit e-mailadres kon niet worden regegistreerd')
-    }
-  }, [registered])
 
   const onChange = (e: FormEvent<HTMLInputElement>): void => {
     const safeInputValue: string = e.currentTarget.value
@@ -47,6 +43,7 @@ const Register: React.FC<RegisterProps> = ({ registered }) => {
   }
 
   const handleClickOpen = () => {
+    actions.releaseRegister();
     setOpenRegister(true)
   }
 
@@ -63,17 +60,24 @@ const Register: React.FC<RegisterProps> = ({ registered }) => {
 
   return (
     <React.Fragment>
-      <But onClick={handleClickOpen}>(registreren)</But>
+      <p>Heb je nog geen inloggegevens? 
+        <But onClick={handleClickOpen}>
+          <span>Registreer</span>
+        </But>
+        je eerst, dan sturen we je inloggevens toe.
+      </p>
       <Dialog
+        fullWidth
+        maxWidth={'md'}
         open={openRegister}
         onClose={handleClose}
         aria-labelledby="register"
       >
         <DialogTitle id="register">Registreren</DialogTitle>
-        {registered === 'OK' ? (
+        {state.isRegistered ? (
           <React.Fragment>
             <DialogContent>
-              Je bent geregistreerd. Je ontvangt een E-mail waarn je inloggegevens staan.
+              {state.message}
             </DialogContent>
             <DialogActions>
               <Button onClick={handleClose} color="primary">
@@ -84,37 +88,40 @@ const Register: React.FC<RegisterProps> = ({ registered }) => {
         ) : (
           <React.Fragment>
             <DialogContent>
-              <DialogContentText>{error}</DialogContentText>
-                  <TextField
-                    autoFocus
-                    margin="dense"
-                    id="name"
-                    name="email"
-                    label="E-mailadres"
-                    type="email"
-                    value={registerData.email}
-                    inputProps={{
-                      onChange: onChange,
-                    }}
-                    fullWidth
-                  />
-                  <TextField
-                    type="text"
-                    name="name"
-                    label="Naam"
-                    value={registerData.name}
-                    inputProps={{
-                      onChange: onChange,
-                    }}
-                    fullWidth
-                  />
+              <TextField
+                autoFocus
+                margin="dense"
+                id="name"
+                name="email"
+                label="E-mailadres"
+                type="email"
+                value={registerData.email}
+                inputProps={{
+                  onChange: onChange,
+                }}
+                fullWidth
+              />
+              <TextField
+                type="text"
+                name="name"
+                label="Naam"
+                value={registerData.name}
+                inputProps={{
+                  onChange: onChange,
+                }}
+                fullWidth
+              />
             </DialogContent>
             <DialogActions>
-              <Button onClick={handleClose} color="primary">
-                Annuleren
-              </Button>
-              <Button onClick={validateAndSendData} color="primary">
+              <Button
+                disabled={!(registerData.email && registerData.name)}
+                onClick={validateAndSendData}
+                color="primary"
+              >
                 Registreren
+              </Button>
+              <Button onClick={handleClose} color="secondary">
+                Annuleren
               </Button>
             </DialogActions>
           </React.Fragment>
