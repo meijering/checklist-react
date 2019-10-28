@@ -17,7 +17,7 @@ module.exports = (env, options = {}) => ({
     path: path.resolve(__dirname, './dist'),
     filename: '[name]-[hash]-bundle.js',
     chunkFilename: '[name]-[hash]-bundle.js',
-    publicPath: '/v2/',
+    publicPath: '/',
   },
   mode: options.mode || 'development',
   devtool: options.devtool || 'inline-source-map',
@@ -69,7 +69,7 @@ module.exports = (env, options = {}) => ({
       logo: './src/assets/logo-max.png',
       favicons: {
         lang: 'nl-NL',
-        start_url: '/v2/index.html',
+        start_url: '/index.html',
         background_color: '#9de0ad',
         theme_color: '#008025',
       },
