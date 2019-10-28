@@ -1,4 +1,4 @@
-import React, { useState, FormEvent, MouseEvent } from 'react'
+import React, { useState, useEffect, FormEvent, MouseEvent } from 'react'
 import styled from 'styled-components'
 import { useOvermind } from '../overmind'
 
@@ -29,6 +29,10 @@ const Login: React.FC = () => {
     username: '',
     password: '',
   })
+  const [isDisabled, setIsDisabled] = useState(!(credentials.username && credentials.password))
+  useEffect(() => {
+    setIsDisabled(!(credentials.username && credentials.password))
+  }, [credentials])
 
   const onChange = (e: FormEvent<HTMLInputElement>): void => {
     const safeInputValue: string = e.currentTarget.value
@@ -78,8 +82,7 @@ const Login: React.FC = () => {
       </CardContent>
       <CardActions>
         <Button
-          variant="outlined"
-          disabled={!(credentials.username && credentials.password)}
+          disabled={isDisabled}
           onClick={validateAndSendData}
           color="primary"
         >
