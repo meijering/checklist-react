@@ -101,7 +101,7 @@
     "express": "^4.17.1",
     "file-loader": "^3.0.1",
     "hard-source-webpack-plugin": "^0.13.1",
-    "http-proxy": "^1.17.0",
+    "http-proxy": "^1.18.1",
     "intl": "^1.2.5",
     "intl-locales-supported": "^1.1.0",
     "jest": "^24.8.0",
