@@ -1,14 +1,17 @@
-import React, { useState, useEffect, FormEvent, MouseEvent } from 'react'
-import styled from 'styled-components'
-import { useOvermind } from '../overmind'
+import React, {
+  useState,
+  FormEvent,
+  MouseEvent,
+} from 'react';
+import styled from 'styled-components';
 
-import Button from '@material-ui/core/Button'
-import TextField from '@material-ui/core/TextField'
-import Dialog from '@material-ui/core/Dialog'
-import DialogActions from '@material-ui/core/DialogActions'
-import DialogContent from '@material-ui/core/DialogContent'
-import DialogContentText from '@material-ui/core/DialogContentText'
-import DialogTitle from '@material-ui/core/DialogTitle'
+import Button from '@material-ui/core/Button';
+import TextField from '@material-ui/core/TextField';
+import Dialog from '@material-ui/core/Dialog';
+import DialogActions from '@material-ui/core/DialogActions';
+import DialogContent from '@material-ui/core/DialogContent';
+import DialogTitle from '@material-ui/core/DialogTitle';
+import { useOvermind } from '../overmind';
 
 const But = styled.span`
   cursor: pointer;
@@ -22,45 +25,46 @@ const But = styled.span`
   & span {
     text-decoration: underline;
   }
-`
+`;
 
 const Register: React.FC = () => {
-  const { state, actions } = useOvermind()
-  const [openRegister, setOpenRegister] = useState(false)
-  const [disabled, setDisabled] = useState(false)
+  const { state, actions }: any = useOvermind();
+  const [openRegister, setOpenRegister] = useState(false);
+  // const [disabled, setDisabled] = useState(false);
   const [registerData, setRegisterData] = useState({
     email: '',
     name: '',
-  })
+  });
 
   const onChange = (e: FormEvent<HTMLInputElement>): void => {
-    const safeInputValue: string = e.currentTarget.value
-    e.persist()
+    const safeInputValue: string = e.currentTarget.value;
+    e.persist();
     setRegisterData({
       ...registerData,
       ...{ [e.currentTarget.name]: safeInputValue },
-    })
-  }
+    });
+  };
 
   const handleClickOpen = () => {
     actions.releaseRegister();
-    setOpenRegister(true)
-  }
+    setOpenRegister(true);
+  };
 
   const handleClose = () => {
-    setOpenRegister(false)
-  }
+    setOpenRegister(false);
+  };
 
   const validateAndSendData = (e: MouseEvent): void => {
-    e.preventDefault()
+    e.preventDefault();
     if (registerData.email && registerData.name) {
-      actions.doRegister(registerData)
+      actions.doRegister(registerData);
     }
-  }
+  };
 
   return (
     <React.Fragment>
-      <p>Heb je nog geen inloggegevens? 
+      <p>
+        Heb je nog geen inloggegevens?
         <But onClick={handleClickOpen}>
           <span>Registreer</span>
         </But>
@@ -68,7 +72,7 @@ const Register: React.FC = () => {
       </p>
       <Dialog
         fullWidth
-        maxWidth={'md'}
+        maxWidth="md"
         open={openRegister}
         onClose={handleClose}
         aria-labelledby="register"
@@ -97,7 +101,7 @@ const Register: React.FC = () => {
                 type="email"
                 value={registerData.email}
                 inputProps={{
-                  onChange: onChange,
+                  onChange,
                 }}
                 fullWidth
               />
@@ -107,7 +111,7 @@ const Register: React.FC = () => {
                 label="Naam"
                 value={registerData.name}
                 inputProps={{
-                  onChange: onChange,
+                  onChange,
                 }}
                 fullWidth
               />
@@ -128,7 +132,7 @@ const Register: React.FC = () => {
         )}
       </Dialog>
     </React.Fragment>
-  )
-}
+  );
+};
 
-export default Register
+export default Register;

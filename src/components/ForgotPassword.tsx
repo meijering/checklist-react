@@ -17,7 +17,7 @@ const But = styled.span`
 `
 
 const ForgotPassword: React.FC = () => {
-  const { state, actions } = useOvermind()
+  const { state, actions }: any = useOvermind()
   const [openForgotPassword, setOpenForgotPassword] = useState(false)
   const [error, setError] = useState('')
   const [forgotData, setForgotData] = useState('')

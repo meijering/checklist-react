@@ -1,13 +1,13 @@
-import React, { useState, MouseEvent } from 'react'
-import { useOvermind } from '../overmind'
-import styled from 'styled-components'
-import AppBar from '@material-ui/core/AppBar'
-import IconButton from '@material-ui/core/IconButton'
-import AccountCircle from '@material-ui/icons/AccountCircle'
-import MenuItem from '@material-ui/core/MenuItem'
-import Menu from '@material-ui/core/Menu'
-import { media } from '../utils/media'
-import imageElement from '../assets/logo-max.png'
+import React, { useState, MouseEvent } from 'react';
+import styled from 'styled-components';
+import AppBar from '@material-ui/core/AppBar';
+import IconButton from '@material-ui/core/IconButton';
+import AccountCircle from '@material-ui/icons/AccountCircle';
+import MenuItem from '@material-ui/core/MenuItem';
+import Menu from '@material-ui/core/Menu';
+import { useOvermind } from '../overmind';
+import { media } from '../utils/media';
+import imageElement from '../assets/logo-max.png';
 
 const Toolbar = styled.div`
   max-width: 1000px;
@@ -17,7 +17,7 @@ const Toolbar = styled.div`
   justify-content: space-between;
   align-items: center;
   font-family: sans-serif;
-`
+`;
 
 const Title = styled.div`
   display: flex;
@@ -30,10 +30,10 @@ const Title = styled.div`
     margin-left: 12px;
     font-size: 15px;
   `}
-`
+`;
 const Span = styled.span`
   padding: 20px 0;
-`
+`;
 
 const Img = styled.img`
   height: 50px;
@@ -44,30 +44,30 @@ const Img = styled.img`
   ${media.phone`
     display: none;
   `}
-`
+`;
 
 const Name = styled.span`
   ${media.phone`
     display: none;
   `}
-`
+`;
 
 const MenuAppBar: React.FC = () => {
-  const { state, actions } = useOvermind()
+  const { state, actions }: any = useOvermind();
   const [anchorEl, setAnchorEl] = useState<any>(null);
 
   const handleMenu = (event: MouseEvent): void => {
     setAnchorEl(event.currentTarget);
-  }
+  };
 
   const handleClose = (): void => {
     setAnchorEl(null);
-  }
+  };
 
   const handleLogOut = (): void => {
     actions.logoutUser();
     setAnchorEl(null);
-  }
+  };
 
   const open = Boolean(anchorEl);
 

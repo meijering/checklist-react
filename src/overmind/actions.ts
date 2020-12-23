@@ -1,6 +1,5 @@
 import { Action, AsyncAction } from 'overmind'
 import { RegisterData, PasswordData, Credentials } from './state'
-import { async } from 'q'
 
 type Message = {
   code: string,
@@ -15,7 +14,7 @@ const messages: Message[] = [
   { code: 'P00', message: 'Er is een mail naar je toegestuurd met instructies om je wachtwoord te wijzigen.' },
 ]
 
-export const checkLogin: AsyncAction = async ({ effects, state }) => {
+export const checkLogin: AsyncAction = async ({ effects, state }: any): Promise<void> => {
   const isLoggedIn = await effects.api.checkLoggedIn()
   if (isLoggedIn) {
     state.user = isLoggedIn
@@ -37,7 +36,7 @@ export const releaseSendPwd: Action = ({ effects, state }) => {
   state.passwordSent = false
 }
 
-export const doRegister: AsyncAction<RegisterData> = async ({ effects, state }, registerData) => {  
+export const doRegister: AsyncAction<RegisterData> = async ({ effects, state }, registerData) => {
   state.isRegistered = false
   const userData = await effects.api.setCredentials(registerData)
   const thisMessage = messages.find(m => m.code === userData) || messages[0]

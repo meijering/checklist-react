@@ -1,6 +1,16 @@
 {
   "parser": "babel-eslint",
   "rules": {
+    "import/extensions": [
+        "error",
+        "ignorePackages",
+        {
+          "js": "never",
+          "jsx": "never",
+          "ts": "never",
+          "tsx": "never"
+        }
+    ],
     "react/jsx-filename-extension": [
       1,
       {
@@ -39,6 +49,7 @@
   "settings": {
     "import/resolver": {
       "node": {
+        "extensions": [".js", ".jsx", ".ts", ".tsx"],
         "moduleDirectory": [
           "lib",
           "test",

@@ -1,13 +1,18 @@
-import React, { useState, useEffect, FormEvent, MouseEvent } from 'react'
-import styled from 'styled-components'
-import { useOvermind } from '../overmind'
+import React, {
+  useState,
+  useEffect,
+  FormEvent,
+  MouseEvent,
+} from 'react';
+import styled from 'styled-components';
 
-import Button from '@material-ui/core/Button'
-import TextField from '@material-ui/core/TextField'
-import Card from '@material-ui/core/Card'
-import CardActions from '@material-ui/core/CardActions'
-import CardContent from '@material-ui/core/CardContent'
-import ForgotPassword from './ForgotPassword'
+import Button from '@material-ui/core/Button';
+import TextField from '@material-ui/core/TextField';
+import Card from '@material-ui/core/Card';
+import CardActions from '@material-ui/core/CardActions';
+import CardContent from '@material-ui/core/CardContent';
+import { useOvermind } from '../overmind';
+// import ForgotPassword from './ForgotPassword';
 
 const LoginCard = styled(Card)`
   max-width: 600px;
@@ -22,32 +27,32 @@ const Error = styled.div`
 `;
 
 const Login: React.FC = () => {
-  const { state, actions } = useOvermind()
-  const registered = ''
+  const { state, actions }: any = useOvermind();
+  // const registered = '';
 
   const [credentials, setCredentials] = useState({
     username: '',
     password: '',
-  })
-  const [isDisabled, setIsDisabled] = useState(!(credentials.username && credentials.password))
+  });
+  const [isDisabled, setIsDisabled] = useState(!(credentials.username && credentials.password));
   useEffect(() => {
-    setIsDisabled(!(credentials.username && credentials.password))
-  }, [credentials])
+    setIsDisabled(!(credentials.username && credentials.password));
+  }, [credentials]);
 
   const onChange = (e: FormEvent<HTMLInputElement>): void => {
-    const safeInputValue: string = e.currentTarget.value
+    const safeInputValue: string = e.currentTarget.value;
     setCredentials({
       ...credentials,
       ...{ [e.currentTarget.name]: safeInputValue },
-    })
-  }
+    });
+  };
 
   const validateAndSendData = (e: MouseEvent): void => {
     e.preventDefault();
     if (credentials.username && credentials.password) {
-      actions.doLogin(credentials)
+      actions.doLogin(credentials);
     }
-  }
+  };
 
   return (
     <LoginCard>
@@ -64,7 +69,7 @@ const Login: React.FC = () => {
           type="email"
           value={credentials.username}
           inputProps={{
-            onChange: onChange,
+            onChange,
           }}
           fullWidth
         />
@@ -75,7 +80,7 @@ const Login: React.FC = () => {
           label="wachtwoord"
           value={credentials.password}
           inputProps={{
-            onChange: onChange,
+            onChange,
           }}
           fullWidth
         />
@@ -88,10 +93,9 @@ const Login: React.FC = () => {
         >
           Inloggen
         </Button>
-        <ForgotPassword />
       </CardActions>
     </LoginCard>
-  )
-}
+  );
+};
 
-export default Login
+export default Login;

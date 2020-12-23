@@ -2,19 +2,19 @@ import { keyframes } from 'styled-components'
 
 export const teaserFadeInOut = keyframes`
   0% {
-    opacity: 0; 
+    opacity: 0;
     transform: translateY(14px);
   }
   30% {
-    opacity: 1; 
+    opacity: 1;
     transform: translateY(7px);
   }
   50% {
-    opacity: 1; 
+    opacity: 1;
     transform: translateY(7px);
   }
   70% {
-    opacity: 1; 
+    opacity: 1;
     transform: translateY(7px);
   }
   100% {
@@ -66,9 +66,9 @@ export const bounce = keyframes`
  * easing: easing equation to use
  */
 enum EasingProp {
-  easeOutSine = 'easeOutSine',
-  easeInOutSine = 'easeInOutSine',
-  easeInOutQuint = 'easeInOutQuint',
+  EaseOutSine = 'easeOutSine',
+  EaseInOutSine = 'easeInOutSine',
+  EaseInOutQuint = 'easeInOutQuint',
 }
 interface ColorType {
   dataType: number | null,
@@ -81,14 +81,14 @@ export const scrollToY = (scrollTargetY = 0, speed = 2000, easing = EasingProp.e
   // easing equations from https://github.com/danro/easing-js/blob/master/easing.js
   // const PI_D2 = Math.PI / 2;
   interface EasingEq {
-    easeOutSine: (p: number) => number,
-    easeInOutSine: (p: number) => number,
-    easeInOutQuint: (p: number) => number,
+    EaseOutSine: (p: number) => number,
+    EaseInOutSine: (p: number) => number,
+    EaseInOutQuint: (p: number) => number,
   }
   const easingEquations: EasingEq = {
-    easeOutSine: (pos) => Math.sin(pos * (Math.PI / 2)),
-    easeInOutSine: (pos) => (-0.5 * (Math.cos(Math.PI * pos) - 1)),
-    easeInOutQuint: (pos) => (
+    EaseOutSine: (pos) => Math.sin(pos * (Math.PI / 2)),
+    EaseInOutSine: (pos) => (-0.5 * (Math.cos(Math.PI * pos) - 1)),
+    EaseInOutQuint: (pos) => (
       (pos / 0.5) < 1 ? 0.5 * ((pos / 0.5) ** 5) : 0.5 * ((((pos / 0.5) - 2) ** 5) + 2)),
   }
 

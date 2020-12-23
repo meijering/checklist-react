@@ -1,23 +1,23 @@
-import React, { useState, FormEvent, MouseEvent } from 'react'
-import { RouteComponentProps } from '@reach/router'
-import styled from 'styled-components'
-import { useOvermind } from '../overmind'
+import React, { useState, FormEvent, MouseEvent } from 'react';
+import { RouteComponentProps } from '@reach/router';
+import styled from 'styled-components';
 
-import Button from '@material-ui/core/Button'
-import TextField from '@material-ui/core/TextField'
-import Card from '@material-ui/core/Card'
-import CardActions from '@material-ui/core/CardActions'
-import CardContent from '@material-ui/core/CardContent'
-import Register from './Register'
-import AppBar from './AppBar'
-import imageElement from '../assets/logo-max.png'
-import { media } from '../utils/media'
+import Button from '@material-ui/core/Button';
+import TextField from '@material-ui/core/TextField';
+import Card from '@material-ui/core/Card';
+import CardActions from '@material-ui/core/CardActions';
+import CardContent from '@material-ui/core/CardContent';
+import { useOvermind } from '../overmind';
+// import Register from './Register';
+import AppBar from './AppBar';
+import imageElement from '../assets/logo-max.png';
+import { media } from '../utils/media';
 
 const AppContainer = styled.div`
     position: relative;
     padding-bottom: 4em;
     min-height: calc(100vh - 4em);
-`
+`;
 
 const Content = styled.div`
   padding: 30px 100px;
@@ -49,12 +49,12 @@ const Content = styled.div`
       padding-left: 32px;
     }
   `}
-`
+`;
 
 const Row = styled.div`
   display: flex;
   margin-top: 50px;
-`
+`;
 
 const LoginCard = styled(Card)`
   max-width: 600px;
@@ -74,21 +74,21 @@ interface FPProps {
 }
 
 const ResetPassword: React.FC<RouteComponentProps<FPProps>> = ({ userId, token }) => {
-  const { state, actions } = useOvermind()
-  const registered = ''
+  const { state, actions }: any = useOvermind();
+  // const registered = '';
 
   const [passwords, setPasswords] = useState({
     password: '',
     passwordConfirmed: '',
-  })
+  });
 
   const onChange = (e: FormEvent<HTMLInputElement>): void => {
-    const safeInputValue: string = e.currentTarget.value
+    const safeInputValue: string = e.currentTarget.value;
     setPasswords({
       ...passwords,
       ...{ [e.currentTarget.name]: safeInputValue },
-    })
-  }
+    });
+  };
 
   const validateAndSendData = (e: MouseEvent): void => {
     e.preventDefault();
@@ -97,9 +97,9 @@ const ResetPassword: React.FC<RouteComponentProps<FPProps>> = ({ userId, token }
         userId,
         password: passwords.password,
         token,
-      })
+      });
     }
-  }
+  };
 
   return (
     <AppContainer>
@@ -153,7 +153,7 @@ const ResetPassword: React.FC<RouteComponentProps<FPProps>> = ({ userId, token }
           </LoginCard>
         </Content>
       </AppContainer>
-  )
-}
+  );
+};
 
-export default ResetPassword
+export default ResetPassword;

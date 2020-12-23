@@ -1,20 +1,20 @@
-import React, { useState, useEffect, ChangeEvent } from 'react'
-import styled from 'styled-components'
-import Checkbox from '@material-ui/core/Checkbox'
-import FormControlLabel from '@material-ui/core/FormControlLabel'
-import { TextField } from '@material-ui/core'
-import { Icon } from 'react-icons-kit'
+import React, { useState, ChangeEvent } from 'react';
+import styled from 'styled-components';
+import Checkbox from '@material-ui/core/Checkbox';
+import FormControlLabel from '@material-ui/core/FormControlLabel';
+import { TextField } from '@material-ui/core';
+import { Icon } from 'react-icons-kit';
 /* eslint-disable camelcase */
-import { ic_lightbulb_outline } from 'react-icons-kit/md/ic_lightbulb_outline'
-import { ic_comment } from 'react-icons-kit/md/ic_comment'
+import { ic_lightbulb_outline } from 'react-icons-kit/md/ic_lightbulb_outline';
+import { ic_comment } from 'react-icons-kit/md/ic_comment';
 /* eslint-enable camelcase */
-import AnimateHeight from 'react-animate-height'
-import ScaleLoader from 'react-spinners/ScaleLoader'
+import AnimateHeight from 'react-animate-height';
+import ScaleLoader from 'react-spinners/ScaleLoader';
 
-import { useOvermind } from '../overmind'
-import { Question } from '../overmind/state'
-import { media } from '../utils/media'
-import Remarks from './Remarks'
+import { useOvermind } from '../overmind';
+import { Question } from '../overmind/state';
+import { media } from '../utils/media';
+import Remarks from './Remarks';
 
 const Loader = styled.div`
   position: absolute;
@@ -22,7 +22,7 @@ const Loader = styled.div`
   z-index: 2;
   display: block;
   margin: 0 auto;
-`
+`;
 
 const Bar = styled.div`
   display: flex;
@@ -33,7 +33,7 @@ const Bar = styled.div`
   ${media.phone`
     height: auto;
   `}
-`
+`;
 
 const Check = styled(Checkbox)`
   flex: 0 0 auto;
@@ -45,7 +45,7 @@ const Check = styled(Checkbox)`
     width: 1.5em;
     fill: #008025;
   }
-`
+`;
 
 const QuestionBox = styled.div`
   display: inline-flex;
@@ -53,66 +53,65 @@ const QuestionBox = styled.div`
   & span {
     font-size: 18px;
   }
-`
+`;
 
 export const QuestionInfo = styled(AnimateHeight)`
   ${media.phone`
     display: none;
   `}
-`
+`;
 
 const InfoContainer = styled.div`
   display: flex;
   flex-direction: row;
   min-height: 60vh;
-`
+`;
 
 const Tip = styled.div`
   margin-bottom: 5px;
-`
+`;
 
 const Navigator = styled.div`
   display: flex;
   flex: 0 0 40px;
   flex-direction: column;
   align-items: center;
-`
+`;
 
 const InfoContent = styled.div`
   flex: 0 0 90%;
-`
+`;
 
 const setLastAnswer = (question: Question) => (question.answers
   ? question.answers.map(a => a.antwoord)[0]
-  : '')
+  : '');
 
 interface QuestionProps {
   question: Question,
-  saveAnswer: () => void,
   showDetail?: boolean,
 }
-  
-const QuestionEl: React.FC<QuestionProps> = ({ question, saveAnswer, showDetail = false }) => {
-  const { state, actions } = useOvermind()
-  const [more, setMore] = useState(setLastAnswer(question))
+
+const QuestionEl: React.FC<QuestionProps> = ({ question, showDetail = false }) => {
+  const { state, actions }: any = useOvermind();
+  const [more, setMore] = useState(setLastAnswer(question));
 
   const lastAnswer = question.answers
     ? question.answers.map(a => a.antwoord)[0] === '1'
-    : false
+    : false;
 
   const onChange = (e: ChangeEvent<HTMLInputElement>): void => {
-    setMore(e.currentTarget.value)
-  }
+    setMore(e.currentTarget.value);
+  };
 
   const saveCheck = () => {
-    actions.saveAnswer({ question: question.vraag_id, answer: lastAnswer ? '' : '1' })
-  }
+    actions.saveAnswer({ question: question.vraag_id, answer: lastAnswer ? '' : '1' });
+  };
 
   const saveThis = () => {
     if (more !== setLastAnswer(question)) {
-      actions.saveAnswer({ question: question.vraag_id, answer: more })
+      actions.saveAnswer({ question: question.vraag_id, answer: more });
     }
-  }
+  };
 
   /* eslint-disable camelcase */
   return (
@@ -122,8 +121,6 @@ const QuestionEl: React.FC<QuestionProps> = ({ question, saveAnswer, showDetail 
         <QuestionBox>
           <Loader>
             <ScaleLoader
-              widthUnit="px"
-              heightUnit="px"
               width={3}
               height={24}
               margin="2px"
@@ -168,6 +165,6 @@ const QuestionEl: React.FC<QuestionProps> = ({ question, saveAnswer, showDetail 
       )}
     </React.Fragment>
   );
-}
+};
 
-export default QuestionEl
+export default QuestionEl;
