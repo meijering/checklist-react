@@ -25,7 +25,7 @@ interface RemarkProps {
   remarks: Remark[],
 }
 
-const Remarks: React.FC<RemarkProps> = ({ remarks }) => (
+const Remarks: React.FC<RemarkProps> = ({ remarks }: RemarkProps) => (
   <React.Fragment>
     {remarks.map(remark => (
       <Item key={`remark-${remark.opmerking_id}`}>

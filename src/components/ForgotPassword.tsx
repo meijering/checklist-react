@@ -1,48 +1,49 @@
-import React, { useState, useEffect, FormEvent, MouseEvent } from 'react'
-import styled from 'styled-components'
-import { useOvermind } from '../overmind'
+/* eslint-disable no-unused-vars, react/jsx-curly-brace-presence */
+import React, { useState, FormEvent, MouseEvent } from 'react';
 
-import Button from '@material-ui/core/Button'
-import TextField from '@material-ui/core/TextField'
-import Dialog from '@material-ui/core/Dialog'
-import DialogActions from '@material-ui/core/DialogActions'
-import DialogContent from '@material-ui/core/DialogContent'
-import DialogContentText from '@material-ui/core/DialogContentText'
-import DialogTitle from '@material-ui/core/DialogTitle'
+import Button from '@material-ui/core/Button';
+import TextField from '@material-ui/core/TextField';
+import Dialog from '@material-ui/core/Dialog';
+import DialogActions from '@material-ui/core/DialogActions';
+import DialogContent from '@material-ui/core/DialogContent';
+import DialogContentText from '@material-ui/core/DialogContentText';
+import DialogTitle from '@material-ui/core/DialogTitle';
+import styled from 'styled-components';
+import { useOvermind } from '../overmind';
 
 const But = styled.span`
   cursor: pointer;
   color: green;
   text-decoration: underline;
-`
+`;
 
 const ForgotPassword: React.FC = () => {
-  const { state, actions }: any = useOvermind()
-  const [openForgotPassword, setOpenForgotPassword] = useState(false)
-  const [error, setError] = useState('')
-  const [forgotData, setForgotData] = useState('')
+  const { state, actions }: any = useOvermind();
+  const [openForgotPassword, setOpenForgotPassword] = useState(false);
+  const [error, setError] = useState('');
+  const [forgotData, setForgotData] = useState('');
 
   const onChange = (e: FormEvent<HTMLInputElement>): void => {
-    const safeInputValue: string = e.currentTarget.value
-    e.persist()
-    setForgotData(safeInputValue)
-  }
+    const safeInputValue: string = e.currentTarget.value;
+    e.persist();
+    setForgotData(safeInputValue);
+  };
 
   const handleClickOpen = () => {
-    setOpenForgotPassword(true)
-  }
+    setOpenForgotPassword(true);
+  };
 
   const handleClose = () => {
-    actions.releaseSendPwd()
-    setOpenForgotPassword(false)
-  }
+    actions.releaseSendPwd();
+    setOpenForgotPassword(false);
+  };
 
   const validateAndSendData = (e: MouseEvent): void => {
-    e.preventDefault()
+    e.preventDefault();
     if (forgotData) {
-      actions.doSendPwd(forgotData)
+      actions.doSendPwd(forgotData);
     }
-  }
+  };
 
   return (
     <React.Fragment>
@@ -83,7 +84,7 @@ const ForgotPassword: React.FC = () => {
                     type="email"
                     value={forgotData}
                     inputProps={{
-                      onChange: onChange,
+                      onChange,
                     }}
                     fullWidth
                   />
@@ -100,7 +101,7 @@ const ForgotPassword: React.FC = () => {
         )}
       </Dialog>
     </React.Fragment>
-  )
-}
+  );
+};
 
-export default ForgotPassword
+export default ForgotPassword;

@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+/* eslint-disable no-mixed-operators, space-infix-ops */
+import React, { ReactNode, useState } from 'react';
 import styled from 'styled-components';
 import { Progress } from 'react-sweet-progress';
 import AnimateHeight from 'react-animate-height';
@@ -155,11 +156,12 @@ interface Prop {
   nmbrOfQuestions: number,
   nmbrOfAnswers: number,
   toggleActive: (item: number, value: boolean) => void,
+  children?: ReactNode,
 }
 
 const GroupItem: React.FC<Prop> = ({
   id, name, toggleActive, nmbrOfQuestions, nmbrOfAnswers, children,
-}) => {
+}: Prop) => {
   const [questionsToggled, setQuestionsToggled] = useState(true);
   const percent = Math.round((nmbrOfAnswers / nmbrOfQuestions) * 100);
 

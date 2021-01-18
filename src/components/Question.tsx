@@ -91,7 +91,7 @@ interface QuestionProps {
   showDetail?: boolean,
 }
 
-const QuestionEl: React.FC<QuestionProps> = ({ question, showDetail = false }) => {
+const QuestionEl: React.FC<QuestionProps> = ({ question, showDetail = false }: QuestionProps) => {
   const { state, actions }: any = useOvermind();
   const [more, setMore] = useState(setLastAnswer(question));
 

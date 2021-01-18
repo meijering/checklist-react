@@ -11,7 +11,7 @@ const HtmlWebpackPlugin = require('html-webpack-plugin');
 
 module.exports = (env, options = {}) => ({
   entry: {
-    main: './src/index.tsx',
+    main: './src/index.js',
   },
   output: {
     path: path.resolve(__dirname, './dist'),

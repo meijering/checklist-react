@@ -69,11 +69,11 @@ const Error = styled.div`
 `;
 
 interface FPProps {
-  userId: string,
-  token: string,
+  userId?: string,
+  token?: string,
 }
 
-const ResetPassword: React.FC<RouteComponentProps<FPProps>> = ({ userId, token }) => {
+const ResetPassword: React.FC<RouteComponentProps<FPProps>> = ({ userId, token }: FPProps) => {
   const { state, actions }: any = useOvermind();
   // const registered = '';
 
@@ -92,7 +92,8 @@ const ResetPassword: React.FC<RouteComponentProps<FPProps>> = ({ userId, token }
 
   const validateAndSendData = (e: MouseEvent): void => {
     e.preventDefault();
-    if (userId && token && passwords.password && passwords.password === passwords.passwordConfirmed) {
+    if (userId && token && passwords.password
+      && passwords.password === passwords.passwordConfirmed) {
       actions.changePassword({
         userId,
         password: passwords.password,
@@ -104,55 +105,56 @@ const ResetPassword: React.FC<RouteComponentProps<FPProps>> = ({ userId, token }
   return (
     <AppContainer>
       <AppBar />
-        <Content>
-          <Row>
-          <img src={imageElement} alt="logo" />
-            <h1>
-              Toegangscode wijzigen
-            </h1>
-          </Row>
-          <LoginCard>
-            <CardContent>
-              <Error>
-                {state.error.login}
-              </Error>
-              <TextField
-                autoFocus
-                margin="dense"
-                id="password"
-                name="password"
-                label="Nieuw wachtwoord"
-                type="password"
-                value={passwords.password}
-                inputProps={{
-                  onChange: onChange,
-                }}
-                fullWidth
-              />
-              <TextField
-                type="password"
-                id="passwordConfirmed"
-                name="passwordConfirmed"
-                label="bevestig wachtwoord"
-                value={passwords.passwordConfirmed}
-                inputProps={{
-                  onChange: onChange,
-                }}
-                fullWidth
-              />
-            </CardContent>
-            <CardActions>
-              <Button
-                disabled={!(passwords.password && passwords.password === passwords.passwordConfirmed)}
-                onClick={validateAndSendData}
-                color="primary"
-              >
-                Verzenden
-              </Button>
-            </CardActions>
-          </LoginCard>
-        </Content>
-      </AppContainer>
+      <Content>
+        <Row>
+        <img src={imageElement} alt="logo" />
+          <h1>
+            Toegangscode wijzigen
+          </h1>
+        </Row>
+        <LoginCard>
+          <CardContent>
+            <Error>
+              {state.error.login}
+            </Error>
+            <TextField
+              autoFocus
+              margin="dense"
+              id="password"
+              name="password"
+              label="Nieuw wachtwoord"
+              type="password"
+              value={passwords.password}
+              inputProps={{
+                onChange,
+              }}
+              fullWidth
+            />
+            <TextField
+              type="password"
+              id="passwordConfirmed"
+              name="passwordConfirmed"
+              label="bevestig wachtwoord"
+              value={passwords.passwordConfirmed}
+              inputProps={{
+                onChange,
+              }}
+              fullWidth
+            />
+          </CardContent>
+          <CardActions>
+            <Button
+              disabled={!(passwords.password
+                && passwords.password === passwords.passwordConfirmed)}
+              onClick={validateAndSendData}
+              color="primary"
+            >
+              Verzenden
+            </Button>
+          </CardActions>
+        </LoginCard>
+      </Content>
+    </AppContainer>
   );
 };
 

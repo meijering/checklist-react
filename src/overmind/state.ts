@@ -1,4 +1,5 @@
-import { Derive } from 'overmind'
+/* eslint-disable no-shadow, max-len */
+import { derived } from 'overmind';
 
 export type Credentials = {
   username: string,
@@ -62,7 +63,7 @@ export type Group = {
   groep_id: number,
   naam: string,
   navigatie_naam: string,
-  questions: Question[]
+  questions: Question[],
   thema: number,
 }
 
@@ -83,7 +84,7 @@ export type State = {
   hasLoaded: boolean,
   isSaving?: number,
   groups?: Group[],
-  themedGroups: Derive<State, Group[]>,
+  themedGroups: Group[],
   error: Error,
 }
 
@@ -95,6 +96,7 @@ export const state: State = {
   hasLoaded: false,
   theme: 1,
   error: {},
-  themedGroups: ({ groups, theme }) =>
-    groups ? Object.values(groups).filter(item => item.thema === theme) : [],
-}
+  themedGroups: derived((state: State) => {
+    return state.groups ? Object.values(state.groups).filter((item: any) => item.thema === state.theme) : [];
+  }),
+};

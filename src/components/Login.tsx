@@ -12,7 +12,7 @@ import Card from '@material-ui/core/Card';
 import CardActions from '@material-ui/core/CardActions';
 import CardContent from '@material-ui/core/CardContent';
 import { useOvermind } from '../overmind';
-// import ForgotPassword from './ForgotPassword';
+import ForgotPassword from './ForgotPassword';
 
 const LoginCard = styled(Card)`
   max-width: 600px;
@@ -93,6 +93,7 @@ const Login: React.FC = () => {
         >
           Inloggen
         </Button>
+        <ForgotPassword />
       </CardActions>
     </LoginCard>
   );

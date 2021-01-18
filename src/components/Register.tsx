@@ -3,7 +3,7 @@ import React, {
   FormEvent,
   MouseEvent,
 } from 'react';
-import styled from 'styled-components';
+// import styled from 'styled-components';
 
 import Button from '@material-ui/core/Button';
 import TextField from '@material-ui/core/TextField';
@@ -13,19 +13,19 @@ import DialogContent from '@material-ui/core/DialogContent';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import { useOvermind } from '../overmind';
 
-const But = styled.span`
-  cursor: pointer;
-  color: green;
-  &::before {
-    content: ' ';
-  }
-  &::after {
-    content: ' ';
-  }
-  & span {
-    text-decoration: underline;
-  }
-`;
+// const But = styled.span`
+//   cursor: pointer;
+//   color: green;
+//   &::before {
+//     content: ' ';
+//   }
+//   &::after {
+//     content: ' ';
+//   }
+//   & span {
+//     text-decoration: underline;
+//   }
+// `;
 
 const Register: React.FC = () => {
   const { state, actions }: any = useOvermind();
@@ -45,10 +45,10 @@ const Register: React.FC = () => {
     });
   };
 
-  const handleClickOpen = () => {
-    actions.releaseRegister();
-    setOpenRegister(true);
-  };
+  // const handleClickOpen = () => {
+  //   actions.releaseRegister();
+  //   setOpenRegister(true);
+  // };
 
   const handleClose = () => {
     setOpenRegister(false);
@@ -63,13 +63,6 @@ const Register: React.FC = () => {
 
   return (
     <React.Fragment>
-      <p>
-        Heb je nog geen inloggegevens?
-        <But onClick={handleClickOpen}>
-          <span>Registreer</span>
-        </But>
-        je eerst, dan sturen we je inloggevens toe.
-      </p>
       <Dialog
         fullWidth
         maxWidth="md"

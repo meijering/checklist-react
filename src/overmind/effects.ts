@@ -1,8 +1,25 @@
-import axios from 'axios'
-import { Credentials, RegisterData, PasswordData, Group, Question } from './state'
+/* eslint-disable keyword-spacing, no-unused-vars */
+import axios from 'axios';
+import {
+  Credentials,
+  RegisterData,
+  PasswordData,
+  Group,
+  Question,
+} from './state';
 
-const base = process.env.REACT_APP_API
+
+const base = process.env.REACT_APP_API;
 axios.defaults.withCredentials = true;
+
+const authorizedAxios = (data: any) => {
+  const localToken = sessionStorage.getItem('token');
+  return axios({
+    ...data,
+    headers: { Authorization: `Bearer ${localToken}` },
+  });
+};
+
 interface Answer {
   question: number,
   answer: string,
@@ -13,12 +30,11 @@ export const api = {
       const result = await axios({
         method: 'POST',
         url: `${base}/register`,
-        data:  registerData,
-      })
-      return result.data.code
+        data: registerData,
+      });
+      return result.data.code;
     } catch(e) {
-      console.log(e.response)
-      return e.response.data.code
+      return e.response.data.code;
     }
   },
   checkLoggedIn: async (): Promise<any> => {
@@ -26,23 +42,23 @@ export const api = {
       const checked = await axios({
         method: 'GET',
         url: `${base}/auth/check`,
-      })
-      return checked.data
+      });
+      return checked.data;
     } catch(e) {
       return null;
     }
   },
-  setPassword: async ({ userId, password, token }: PasswordData ): Promise<any> => {
+  setPassword: async ({ userId, password, token }: PasswordData): Promise<any> => {
     const result = await axios({
       method: 'POST',
       url: `${base}/auth/store-password`,
       data: {
-        userId: userId,
-        password: password,
-        token: token,
+        userId,
+        password,
+        token,
       },
-    })
-    return result
+    });
+    return result;
   },
   askForPassword: async (email: string): Promise<any> => {
     try {
@@ -52,11 +68,10 @@ export const api = {
         data: {
           email,
         },
-      })
-      return 'P00'
+      });
+      return 'P00';
     } catch(e) {
-      console.log(e.response)
-      return e.response.data.code
+      return e.response.data.code;
     }
   },
   getUser: async (credentials: Credentials): Promise<any> => {
@@ -65,21 +80,21 @@ export const api = {
         method: 'POST',
         url: `${base}/auth/login`,
         data: credentials,
-      })
-      return userData.data
+      });
+      return userData.data;
     } catch(e) {
-      return { message: 'De combinatie van e-mail adres en wachtwoord is niet bekend' }
+      return { message: 'De combinatie van e-mail adres en wachtwoord is niet bekend' };
     }
   },
   doLogout: async (): Promise<void> => {
     await axios({
       url: `${base}/auth/logout`,
-    })
+    });
   },
   getGroups: async (): Promise<any> => {
-    const groupData = await axios({
+    const groupData = await authorizedAxios({
       url: `${base}/api/v0/groups`,
-    })
+    });
     return groupData.data.map((group: Group) => ({
       ...group,
       questions: group.questions.slice()
@@ -87,16 +102,18 @@ export const api = {
         .map((question: Question) => ({
           ...question,
           answers: question.answers.slice()
-            .sort((a, b) =>  new Date(b.ingevoerd_op).getTime() - new Date(a.ingevoerd_op).getTime()),
-        }))
-    }))
+            .sort(
+              (a, b) => new Date(b.ingevoerd_op).getTime() - new Date(a.ingevoerd_op).getTime(),
+            ),
+        })),
+    }));
   },
   setAnswer: async (answer: Answer): Promise<any> => {
-    const result = await axios({
+    const result = await authorizedAxios({
       method: 'PUT',
       url: `${base}/api/v0/questions/${answer.question}/answer`,
       data: { answer: answer.answer },
-    })
+    });
     return result.data.map((group: Group) => ({
       ...group,
       questions: group.questions.slice()
@@ -104,8 +121,11 @@ export const api = {
         .map((question: Question) => ({
           ...question,
           answers: question.answers.slice()
-            .sort((a, b) =>  new Date(b.ingevoerd_op).getTime() - new Date(a.ingevoerd_op).getTime()),
+            .sort(
+              (a, b) => new Date(b.ingevoerd_op).getTime() - new Date(a.ingevoerd_op).getTime(),
+            ),
         })),
-    })
-  )},
-}
+    }));
+  },
+};
+export default api;
