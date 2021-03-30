@@ -108,7 +108,7 @@
     "jest-styled-components": "^6.3.1",
     "lighthouse": "^4.3.1",
     "loader-utils": "^1.0.2",
-    "minimist": "^1.2.0",
+    "minimist": "^1.2.3",
     "mocha": "^6.1.4",
     "nyc": "^13.3.0",
     "pa11y-ci": "^2.3.0",
