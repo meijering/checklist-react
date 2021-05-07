@@ -19,7 +19,7 @@
     "immutable": "^3.8.2",
     "invariant": "^2.2.4",
     "jsdom": "^13.2.0",
-    "lodash": "^4.17.19",
+    "lodash": "^4.17.21",
     "prop-types": "^15.7.2",
     "rc-progress": "^2.3.0",
     "react": "^16.8.6",
