@@ -5,13 +5,14 @@ import * as ReactDOM from 'react-dom';
 import { Router } from '@reach/router';
 import { createOvermind } from 'overmind';
 import { Provider } from 'overmind-react';
-import { MuiThemeProvider, createMuiTheme } from '@material-ui/core/styles';
-import App from './App/App'; // eslint-disable-line import/no-named-as-default
+import { ThemeProvider, createMuiTheme } from '@material-ui/core/styles';
+import App from './App/App';
 import ResetPassword from './components/ResetPassword';
+import RegisterDone from './components/done';
 import { config } from './overmind';
 // The initial state of the App
 const breakpointValues = {
-  // keep first breakpoint at zero instead of 322px, see spec material ui breakpoints at https://github.com/mui-org/material-ui/blob/master/packages/material-ui/src/styles/createBreakpoints.js
+  // keep first breakpoint at zero instead of 322px
   xs: 0,
   sm: 544,
   md: 768,
@@ -20,11 +21,11 @@ const breakpointValues = {
 };
 
 const gridAdjustments = createMuiTheme({
-  typography: {
-    useNextVariants: true,
-  },
+  // typography: {
+  //   useNextVariants: true,
+  // },
   breakpoints: { values: breakpointValues },
-  spacing: { unit: 15 },
+  // spacing: { unit: 15 },
   palette: {
     primary: {
       main: '#008025',
@@ -36,17 +37,18 @@ const gridAdjustments = createMuiTheme({
   },
 });
 
-const overmind = createOvermind(config, { devtools: true });
+const overmind = createOvermind(config, { devtools: 'localhost:3002' });
 
 const MOUNT_NODE = document.getElementById('root');
 ReactDOM.render(
   <Provider value={overmind}>
-    <MuiThemeProvider theme={gridAdjustments}>
+    <ThemeProvider theme={gridAdjustments}>
       <Router>
         <App path="/" />
+        <RegisterDone path="/geregistreerd" />
         <ResetPassword path="/reset/:userId/:token" />
       </Router>
-    </MuiThemeProvider>
+    </ThemeProvider>
   </Provider>,
   MOUNT_NODE,
 );

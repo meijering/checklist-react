@@ -110,7 +110,7 @@ export const GroupBar = styled.div`
   cursor: pointer;
 `;
 interface MyProps {
-  toggled: boolean,
+  toggled: boolean;
 }
 
 export const Toggle = styled.div<MyProps>`
@@ -151,12 +151,12 @@ const progressTheme = () => {
     .reduce((acc, curr) => ({ ...acc, ...curr }), {});
 };
 interface Prop {
-  id: number,
-  name: string,
-  nmbrOfQuestions: number,
-  nmbrOfAnswers: number,
-  toggleActive: (item: number, value: boolean) => void,
-  children?: ReactNode,
+  id: number;
+  name: string;
+  nmbrOfQuestions: number;
+  nmbrOfAnswers: number;
+  toggleActive: (item: number, value: boolean) => void;
+  children?: ReactNode;
 }
 
 const GroupItem: React.FC<Prop> = ({

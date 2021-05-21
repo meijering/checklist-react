@@ -8,50 +8,73 @@ import {
   Question,
 } from './state';
 
-
 const base = process.env.REACT_APP_API;
 axios.defaults.withCredentials = true;
 
-const authorizedAxios = (data: any) => {
+const authorizedAxios = async (data: any) => {
   const localToken = sessionStorage.getItem('token');
+  const refreshed = await axios({
+    method: 'GET',
+    url: `${base}/auth/refresh`,
+    headers: { Authorization: `Bearer ${localToken}` },
+  });
+  sessionStorage.setItem('token', refreshed.data.access_token);
   return axios({
     ...data,
+    // eslint-disable-next-line @typescript-eslint/naming-convention
     headers: { Authorization: `Bearer ${localToken}` },
   });
 };
 
-interface Answer {
-  question: number,
-  answer: string,
+interface IAnswer {
+  question: number;
+  answer: string;
 }
 export const api = {
   setCredentials: async (registerData: RegisterData): Promise<any> => {
     try {
+
+      // const result = await axios({
+      //   method: 'POST',
+      //   url: 'http://localhost:5000/payments',
+      //   data: {
+      //     value: '20',
+      //     description: 'Checklist',
+      //     redirect: 'http://localhost:5000/thankyou',
+      //     email: 'jan@meijering.com',
+      //   }
+      // });
+      // return result.data;
       const result = await axios({
         method: 'POST',
-        url: `${base}/register`,
-        data: registerData,
+        url: `${base}/users/register`,
+        data: {
+          ...registerData,
+          returnTo: '/geregistreerd',
+        }
       });
-      return result.data.code;
-    } catch(e) {
-      return e.response.data.code;
+      // eslint-disable-next-line no-console
+      return result.data;
+    } catch (e) {
+      // return e.response.data.code;
+      return e;
     }
   },
   checkLoggedIn: async (): Promise<any> => {
     try {
-      const checked = await axios({
+      const checked = await authorizedAxios({
         method: 'GET',
         url: `${base}/auth/check`,
       });
       return checked.data;
-    } catch(e) {
+    } catch (e) {
       return null;
     }
   },
   setPassword: async ({ userId, password, token }: PasswordData): Promise<any> => {
     const result = await axios({
       method: 'POST',
-      url: `${base}/auth/store-password`,
+      url: `${base}/passwords/store-password`,
       data: {
         userId,
         password,
@@ -62,15 +85,15 @@ export const api = {
   },
   askForPassword: async (email: string): Promise<any> => {
     try {
-      const result = await axios({
+      await axios({
         method: 'POST',
-        url: `${base}/auth/reset-password`,
+        url: `${base}/passwords/reset-password`,
         data: {
           email,
         },
       });
       return 'P00';
-    } catch(e) {
+    } catch (e) {
       return e.response.data.code;
     }
   },
@@ -82,50 +105,65 @@ export const api = {
         data: credentials,
       });
       return userData.data;
-    } catch(e) {
-      return { message: 'De combinatie van e-mail adres en wachtwoord is niet bekend' };
+    } catch (e) {
+      return e.response.status === 403 ? 'E01' : 'E02';
     }
   },
-  doLogout: async (): Promise<void> => {
-    await axios({
-      url: `${base}/auth/logout`,
-    });
+
+  doLogout: async (): Promise<any> => {
+    try {
+      await authorizedAxios({
+        url: `${base}/auth/logout`,
+      });
+      return 'R04';
+    } catch (e) {
+      return 'E99';
+    }
   },
+
   getGroups: async (): Promise<any> => {
-    const groupData = await authorizedAxios({
-      url: `${base}/api/v0/groups`,
-    });
-    return groupData.data.map((group: Group) => ({
-      ...group,
-      questions: group.questions.slice()
-        .sort((a, b) => a.rang - b.rang)
-        .map((question: Question) => ({
-          ...question,
-          answers: question.answers.slice()
-            .sort(
-              (a, b) => new Date(b.ingevoerd_op).getTime() - new Date(a.ingevoerd_op).getTime(),
-            ),
-        })),
-    }));
+    try {
+      const groupData = await authorizedAxios({
+        url: `${base}/groups`,
+      });
+      return groupData.data.map((group: Group) => ({
+        ...group,
+        questions: group.questions.slice()
+          .sort((a, b) => a.rang - b.rang)
+          .map((question: Question) => ({
+            ...question,
+            answers: question.answers.slice()
+              .sort(
+                (a, b) => new Date(b.ingevoerdOp).getTime() - new Date(a.ingevoerdOp).getTime(),
+              ),
+          })),
+      }));
+    } catch (error) {
+      return { message: 'Je sessie is verlopen. Ververs de pagina om weer in te loggen.' };
+    }
   },
-  setAnswer: async (answer: Answer): Promise<any> => {
-    const result = await authorizedAxios({
-      method: 'PUT',
-      url: `${base}/api/v0/questions/${answer.question}/answer`,
-      data: { answer: answer.answer },
-    });
-    return result.data.map((group: Group) => ({
-      ...group,
-      questions: group.questions.slice()
-        .sort((a, b) => a.rang - b.rang)
-        .map((question: Question) => ({
-          ...question,
-          answers: question.answers.slice()
-            .sort(
-              (a, b) => new Date(b.ingevoerd_op).getTime() - new Date(a.ingevoerd_op).getTime(),
-            ),
-        })),
-    }));
+  setAnswer: async (answer: IAnswer): Promise<any> => {
+    try {
+      const result = await authorizedAxios({
+        method: 'PUT',
+        url: `${base}/answers/${answer.question}/answer`,
+        data: { answer: answer.answer },
+      });
+      return result.data.map((group: Group) => ({
+        ...group,
+        questions: group.questions.slice()
+          .sort((a, b) => a.rang - b.rang)
+          .map((question: Question) => ({
+            ...question,
+            answers: question.answers.slice()
+              .sort(
+                (a, b) => new Date(b.ingevoerdOp).getTime() - new Date(a.ingevoerdOp).getTime(),
+              ),
+          })),
+      }));
+    } catch (error) {
+      return { message: 'Je sessie is verlopen, je antwoord is niet opgeslagen. Ververs de pagina om weer in te loggen.' };
+    }
   },
 };
 export default api;

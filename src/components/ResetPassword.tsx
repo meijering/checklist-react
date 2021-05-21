@@ -1,3 +1,4 @@
+// eslint:disable: jsx-boolean-value
 import React, { useState, FormEvent, MouseEvent } from 'react';
 import { RouteComponentProps } from '@reach/router';
 import styled from 'styled-components';
@@ -68,12 +69,12 @@ const Error = styled.div`
   color: red;
 `;
 
-interface FPProps {
-  userId?: string,
-  token?: string,
+interface IFPProps {
+  userId?: string;
+  token?: string;
 }
 
-const ResetPassword: React.FC<RouteComponentProps<FPProps>> = ({ userId, token }: FPProps) => {
+const ResetPassword: React.FC<RouteComponentProps<IFPProps>> = ({ userId, token }: IFPProps) => {
   const { state, actions }: any = useOvermind();
   // const registered = '';
 
@@ -107,51 +108,59 @@ const ResetPassword: React.FC<RouteComponentProps<FPProps>> = ({ userId, token }
       <AppBar />
       <Content>
         <Row>
-        <img src={imageElement} alt="logo" />
+          <img src={imageElement} alt="logo" />
           <h1>
             Toegangscode wijzigen
           </h1>
         </Row>
         <LoginCard>
-          <CardContent>
-            <Error>
-              {state.error.login}
-            </Error>
-            <TextField
-              autoFocus
-              margin="dense"
-              id="password"
-              name="password"
-              label="Nieuw wachtwoord"
-              type="password"
-              value={passwords.password}
-              inputProps={{
-                onChange,
-              }}
-              fullWidth
-            />
-            <TextField
-              type="password"
-              id="passwordConfirmed"
-              name="passwordConfirmed"
-              label="bevestig wachtwoord"
-              value={passwords.passwordConfirmed}
-              inputProps={{
-                onChange,
-              }}
-              fullWidth
-            />
-          </CardContent>
-          <CardActions>
-            <Button
-              disabled={!(passwords.password
-                && passwords.password === passwords.passwordConfirmed)}
-              onClick={validateAndSendData}
-              color="primary"
-            >
-              Verzenden
-            </Button>
-          </CardActions>
+          {state.passwordSent ? (
+            <CardContent>
+              {state.message}
+            </CardContent>
+          ) : (
+            <React.Fragment>
+              <CardContent>
+                <Error>
+                  {state.error.login}
+                </Error>
+                <TextField
+                  autoFocus
+                  margin="dense"
+                  id="password"
+                  name="password"
+                  label="Nieuw wachtwoord"
+                  type="password"
+                  value={passwords.password}
+                  inputProps={{
+                    onChange,
+                  }}
+                  fullWidth
+                />
+                <TextField
+                  type="password"
+                  id="passwordConfirmed"
+                  name="passwordConfirmed"
+                  label="bevestig wachtwoord"
+                  value={passwords.passwordConfirmed}
+                  inputProps={{
+                    onChange,
+                  }}
+                  fullWidth
+                />
+              </CardContent>
+              <CardActions>
+                <Button
+                  disabled={!(passwords.password
+                    && passwords.password === passwords.passwordConfirmed)}
+                  onClick={validateAndSendData}
+                  color="primary"
+                >
+                  Verzenden
+                </Button>
+              </CardActions>
+            </React.Fragment>
+          )}
         </LoginCard>
       </Content>
     </AppContainer>

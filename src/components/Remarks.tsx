@@ -22,14 +22,14 @@ const convertDate = (d?: Date | null) => {
 };
 
 interface RemarkProps {
-  remarks: Remark[],
+  remarks: Remark[];
 }
 
 const Remarks: React.FC<RemarkProps> = ({ remarks }: RemarkProps) => (
   <React.Fragment>
     {remarks.map(remark => (
-      <Item key={`remark-${remark.opmerking_id}`}>
-        <Label>{convertDate(remark.ingevoerd_op)}</Label>
+      <Item key={`remark-${remark.opmerkingId}`}>
+        <Label>{convertDate(remark.ingevoerdOp)}</Label>
         {remark.opmerking}
       </Item>
     ))}

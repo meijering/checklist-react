@@ -26,25 +26,26 @@ const Groups: React.FC = () => {
       && cq.answers[0].antwoord === '1').length;
     return (
       <AnimateHeight
-        key={`group-${group.groep_id}`}
+        key={`group-${group.groepId}`}
         duration={300}
         animateOpacity
-        height={!activeItem || group.groep_id === activeItem ? 'auto' : 0}
+        height={!activeItem || group.groepId === activeItem ? 'auto' : 0}
       >
+        {}
         <GroupItem
-          id={group.groep_id}
+          id={group.groepId}
           name={group.naam}
           nmbrOfQuestions={nmbrOfQuestions}
           nmbrOfAnswers={nmbrOfAnswers}
           toggleActive={toggleGroups}
         >
           {/* <ExpandingList> */}
-            {group.questions.map(question => (
-              <QuestionEl
-                key={`question-${question.vraag_id}`}
-                question={question}
-              />
-            ))}
+          {group.questions.map((question) => (
+            <QuestionEl
+              key={`question-${question.vraagId}`}
+              question={question}
+            />
+          ))}
           {/* </ExpandingList> */}
         </GroupItem>
       </AnimateHeight>

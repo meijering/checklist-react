@@ -35,7 +35,7 @@ const inputData = {
 const outputData = {
   valid: {
     loggedIn: true,
-    user: { gebruiker_id: '80', naam: 'De Tester' },
+    user: { gebruikerId: '80', naam: 'De Tester' },
     error: '',
     credentials: inputData.validOut,
   },
@@ -72,9 +72,7 @@ describe('<Login />', () => {
         res({
           ok: true,
           returnValue,
-          json: () => {
-            return new Promise(resolve => resolve(returnValue()));
-          },
+          json: () => new Promise((resolve) => resolve(returnValue())),
         });
       });
       return p;
@@ -99,9 +97,7 @@ describe('<Login />', () => {
   });
 
   test('should send the right data when clicked on the buton', () => {
-    const loginForm = mount((
-      <Login />
-    ));
+    const loginForm = mount(<Login />);
     // const loginFormInstance = loginForm.instance();
     // const validateAndSendData = sinon.spy(loginFormInstance, 'validateAndSendData');
     // const getDataFromApi = sinon.spy(loginFormInstance, 'getDataFromApi');
@@ -120,9 +116,7 @@ describe('<Login />', () => {
   });
 
   test('should not send the data when incorrect and clicked on the buton', () => {
-    const loginForm = mount((
-      <Login />
-    ));
+    const loginForm = mount(<Login />);
     // const loginFormInstance = loginForm.instance();
     // const getDataFromApi = sinon.spy(loginFormInstance, 'getDataFromApi');
 
@@ -139,9 +133,7 @@ describe('<Login />', () => {
   });
 
   test('should update state when returned from fetch with valid username and password', async () => {
-    const loginForm = mount((
-      <Login />
-    ));
+    const loginForm = mount(<Login />);
 
     // let usernameInput = loginForm.find('input[type="text"]')
     // let passwordInput = loginForm.find('input[type="password"]')
@@ -159,9 +151,7 @@ describe('<Login />', () => {
   });
 
   test('should not set user and should show a message when returned from fetch with invalid username and password', async () => {
-    const loginForm = mount((
-      <Login />
-    ));
+    const loginForm = mount(<Login />);
 
     // let usernameInput = loginForm.find('input[type="text"]')
     // let passwordInput = loginForm.find('input[type="password"]')

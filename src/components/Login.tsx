@@ -1,3 +1,4 @@
+// tslint:disable: jsx-boolean-value
 import React, {
   useState,
   useEffect,
@@ -28,18 +29,20 @@ const Error = styled.div`
 
 const Login: React.FC = () => {
   const { state, actions }: any = useOvermind();
-  // const registered = '';
 
   const [credentials, setCredentials] = useState({
     username: '',
     password: '',
   });
   const [isDisabled, setIsDisabled] = useState(!(credentials.username && credentials.password));
+
   useEffect(() => {
     setIsDisabled(!(credentials.username && credentials.password));
-  }, [credentials]);
+  }, [JSON.stringify(credentials)]);
 
   const onChange = (e: FormEvent<HTMLInputElement>): void => {
+    // eslint-disable-next-line no-console
+    console.log('in change');
     const safeInputValue: string = e.currentTarget.value;
     setCredentials({
       ...credentials,
@@ -56,45 +59,49 @@ const Login: React.FC = () => {
 
   return (
     <LoginCard>
-      <CardContent>
-        <Error>
-          {state.error.login}
-        </Error>
-        <TextField
-          autoFocus
-          margin="dense"
-          id="name"
-          name="username"
-          label="e-mailadres"
-          type="email"
-          value={credentials.username}
-          inputProps={{
-            onChange,
-          }}
-          fullWidth
-        />
-        <TextField
-          type="password"
-          id="password"
-          name="password"
-          label="wachtwoord"
-          value={credentials.password}
-          inputProps={{
-            onChange,
-          }}
-          fullWidth
-        />
-      </CardContent>
-      <CardActions>
-        <Button
-          disabled={isDisabled}
-          onClick={validateAndSendData}
-          color="primary"
-        >
-          Inloggen
-        </Button>
-        <ForgotPassword />
-      </CardActions>
+      <form>
+        <CardContent>
+          <Error>
+            {state.error.login}
+          </Error>
+          <TextField
+            autoFocus
+            margin="dense"
+            id="name"
+            name="username"
+            label="e-mailadres"
+            type="email"
+            autoComplete="username"
+            value={credentials.username}
+            inputProps={{
+              onChange,
+            }}
+            fullWidth
+          />
+          <TextField
+            type="password"
+            id="password"
+            name="password"
+            label="wachtwoord"
+            autoComplete="current-password"
+            value={credentials.password}
+            inputProps={{
+              onChange,
+            }}
+            fullWidth
+          />
+        </CardContent>
+        <CardActions>
+          <Button
+            disabled={isDisabled}
+            onClick={validateAndSendData}
+            color="primary"
+          >
+            Inloggen
+          </Button>
+          <ForgotPassword />
+        </CardActions>
+      </form>
     </LoginCard>
   );
 };

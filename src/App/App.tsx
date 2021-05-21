@@ -20,6 +20,7 @@ import Register from '../components/Register';
 import Privacy from '../components/Privacy';
 import { media } from '../utils/media';
 
+const isProd = process.env.NODE_ENV === 'production';
 const Groups = React.lazy(() => import('../components/Groups'));
 
 const AppContainer = styled.div`
@@ -86,11 +87,10 @@ const App: React.FC<RouteComponentProps> = () => {
   }, []);
 
   useEffect(() => {
-    if (Object.keys(state.error).length > 0) {
-      console.log(state.error);
-      toast(state.error.login);
+    if (state.message?.type) {
+      toast[state.message.type](state.message.message);
     }
-  }, [state.error]);
+  }, [JSON.stringify(state.message)]);
 
   return (
     <AppContainer>
@@ -102,13 +102,13 @@ const App: React.FC<RouteComponentProps> = () => {
       ) : (
         <Content>
           <Row>
-          <img src={imageElement} alt="logo" />
+            <img src={imageElement} alt="logo" />
             <h1>
               Welkom
             </h1>
           </Row>
           <Row>
-            <Register />
+            {!isProd && <Register />}
           </Row>
           {state.hasLoaded ? (
             <Login />

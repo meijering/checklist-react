@@ -66,29 +66,29 @@ export const bounce = keyframes`
  * easing: easing equation to use
  */
 enum EasingProp {
-  EaseOutSine = 'EaseOutSine',
-  EaseInOutSine = 'EaseInOutSine',
-  EaseInOutQuint = 'EaseInOutQuint',
+  easeOutSine = 'EaseOutSine',
+  easeInOutSine = 'EaseInOutSine',
+  easeInOutQuint = 'EaseInOutQuint',
 }
-interface ColorType {
-  dataType: number | null,
-  value: string,
+interface IColorType {
+  dataType: number | null;
+  value: string;
 }
-export const scrollToY = (scrollTargetY = 0, speed = 2000, easing = EasingProp.EaseOutSine) => {
+export const scrollToY = (scrollTargetY = 0, speed = 2000, easing = EasingProp.easeOutSine) => {
   let currentTime = 0;
   const time = Math.max(0.1, Math.min(Math.abs(window.scrollY - scrollTargetY) / speed, 0.8));
 
   // easing equations from https://github.com/danro/easing-js/blob/master/easing.js
   // const PI_D2 = Math.PI / 2;
-  interface EasingEq {
-    EaseOutSine: (p: number) => number,
-    EaseInOutSine: (p: number) => number,
-    EaseInOutQuint: (p: number) => number,
+  interface IEasingEq {
+    easeOutSine: (p: number) => number;
+    easeInOutSine: (p: number) => number;
+    easeInOutQuint: (p: number) => number;
   }
-  const easingEquations: EasingEq = {
-    EaseOutSine: pos => Math.sin(pos * (Math.PI / 2)),
-    EaseInOutSine: pos => (-0.5 * (Math.cos(Math.PI * pos) - 1)),
-    EaseInOutQuint: pos => (
+  const easingEquations: IEasingEq = {
+    easeOutSine: pos => Math.sin(pos * (Math.PI / 2)),
+    easeInOutSine: pos => (-0.5 * (Math.cos(Math.PI * pos) - 1)),
+    easeInOutQuint: pos => (
       (pos / 0.5) < 1 ? 0.5 * ((pos / 0.5) ** 5) : 0.5 * ((((pos / 0.5) - 2) ** 5) + 2)),
   };
 
@@ -166,22 +166,20 @@ const processRGB = (val: string) => {
 };
 
 // process the value irrespective of representation type
-const processValue = (el: ColorType) => {
+const processValue = (el: IColorType) => {
   switch (el.dataType) {
-    case HEX:
-      return processHEX(el.value);
-    case RGB:
-      return processRGB(el.value);
-    case RGBA:
-      return processRGB(el.value);
-    default:
-      return null;
+  case HEX:
+    return processHEX(el.value);
+  case RGB:
+    return processRGB(el.value);
+  case RGBA:
+    return processRGB(el.value);
+  default:
+    return null;
   }
 };
 
-const pad = (nn: string, width: number, zn: string = '0'): string => {
-  return nn.length >= width ? nn : new Array(width - nn.length + 1).join(zn) + nn;
-};
+const pad = (nn: string, width: number, zn: string = '0'): string => (nn.length >= width ? nn : new Array(width - nn.length + 1).join(zn) + nn);
 
 export const findColors = (startColor: string, endColor: string, steps: number) => {
   // elements for obtaining vals
@@ -207,8 +205,8 @@ export const findColors = (startColor: string, endColor: string, steps: number) 
     val2RGB[2] - val1RGB[2],
   ];
 
-
   // build the color array out with color steps
+  // tslint:disable: align
 
   return [...Array(steps)].map((s, i) => [
     '#',

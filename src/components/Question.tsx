@@ -87,8 +87,8 @@ const setLastAnswer = (question: Question) => (question.answers
   : '');
 
 interface QuestionProps {
-  question: Question,
-  showDetail?: boolean,
+  question: Question;
+  showDetail?: boolean;
 }
 
 const QuestionEl: React.FC<QuestionProps> = ({ question, showDetail = false }: QuestionProps) => {
@@ -104,12 +104,12 @@ const QuestionEl: React.FC<QuestionProps> = ({ question, showDetail = false }: Q
   };
 
   const saveCheck = () => {
-    actions.saveAnswer({ question: question.vraag_id, answer: lastAnswer ? '' : '1' });
+    actions.saveAnswer({ question: question.vraagId, answer: lastAnswer ? '' : '1' });
   };
 
   const saveThis = () => {
     if (more !== setLastAnswer(question)) {
-      actions.saveAnswer({ question: question.vraag_id, answer: more });
+      actions.saveAnswer({ question: question.vraagId, answer: more });
     }
   };
 
@@ -117,30 +117,30 @@ const QuestionEl: React.FC<QuestionProps> = ({ question, showDetail = false }: Q
   return (
     <React.Fragment>
       <Bar>
-      {question.type === 'checkbox' && (
-        <QuestionBox>
-          <Loader>
-            <ScaleLoader
-              width={3}
-              height={24}
-              margin="2px"
-              color="#008025"
-              loading={state.isSaving === question.vraag_id}
-            />
-          </Loader>
-          <FormControlLabel
-            control={(
-              <Check
-                checked={lastAnswer}
-                onChange={() => saveCheck()}
-                value="1"
-                disabled={!!state.isSaving}
+        {question.type === 'checkbox' && (
+          <QuestionBox>
+            <Loader>
+              <ScaleLoader
+                width={3}
+                height={24}
+                margin="2px"
+                color="#008025"
+                loading={state.isSaving === question.vraagId}
               />
+            </Loader>
+            <FormControlLabel
+              control={(
+                <Check
+                  checked={lastAnswer}
+                  onChange={() => saveCheck()}
+                  value="1"
+                  disabled={!!state.isSaving}
+                />
               )}
-            label={question.vraag}
-          />
-        </QuestionBox>
-      )}
+              label={question.vraag}
+            />
+          </QuestionBox>
+        )}
       </Bar>
       {(question.tips || question.remarks) && (
         <QuestionInfo
@@ -150,11 +150,11 @@ const QuestionEl: React.FC<QuestionProps> = ({ question, showDetail = false }: Q
         >
           <InfoContainer>
             <Navigator>
-            <Icon size="20" icon={ic_lightbulb_outline} />
-            <Icon size="16" icon={ic_comment} />
+              <Icon size="20" icon={ic_lightbulb_outline} />
+              <Icon size="16" icon={ic_comment} />
             </Navigator>
             <InfoContent>
-              {question.tips.map(tip => <Tip key={`tip-${tip.tip_id}`} dangerouslySetInnerHTML={{ __html: tip.tip }} />)}
+              {question.tips.map(tip => <Tip key={`tip-${tip.tipId}`} dangerouslySetInnerHTML={{ __html: tip.tip }} />)}
               <Remarks remarks={question.remarks} />
             </InfoContent>
           </InfoContainer>

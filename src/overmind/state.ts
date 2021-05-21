@@ -2,91 +2,98 @@
 import { derived } from 'overmind';
 
 export type Credentials = {
-  username: string,
-  password: string,
-}
+  username: string;
+  password: string;
+};
 
 export type RegisterData = {
-  email: string,
-  name: string,
-}
+  email: string;
+  name: string;
+};
 
 export type PasswordData = {
-  userId: string,
-  password: string,
-  token: string,
-}
+  userId: string;
+  password: string;
+  token: string;
+};
 
 export type User = {
-  gebruiker_id: number,
-  naam: string,
-  laatst_ingelogd: Date,
-}
+  gebruikerId: number;
+  naam: string;
+  laatstIngelogd: Date;
+};
 
 export type Answer = {
-  antwoord_id: number,
-  vraag_id: number,
-  gebruiker_id: number,
-  antwoord: string,
-  ingevoerd_op: Date,
-}
+  antwoordId: number;
+  vraagId: number;
+  gebruikerId: number;
+  antwoord: string;
+  ingevoerdOp: Date;
+};
 
 export type Remark = {
-  opmerking_id: number,
-  vraag_id: number,
-  gebruiker_id: number,
-  opmerking: string,
-  ingevoerd_op: Date,
-}
+  opmerkingId: number;
+  vraagId: number;
+  gebruikerId: number;
+  opmerking: string;
+  ingevoerdOp: Date;
+};
 
 export type Tip = {
-  tip_id: number,
-  vraag_id: number,
-  gebruiker_id: number,
-  tip: string,
-  ingevoerd_op: Date,
-}
+  tipId: number;
+  vraagId: number;
+  gebruikerId: number;
+  tip: string;
+  ingevoerdOp: Date;
+};
 
 export type Question = {
-  vraag_id: number,
-  groep_id: number,
-  type: string,
-  rang: number,
-  vraag: string,
-  answers: Answer[],
-  remarks: Remark[],
-  tips: Tip[],
-  ingevoerd_op: Date,
-}
+  vraagId: number;
+  groepId: number;
+  type: string;
+  rang: number;
+  vraag: string;
+  answers: Answer[];
+  remarks: Remark[];
+  tips: Tip[];
+  ingevoerdOp: Date;
+};
 
 export type Group = {
-  groep_id: number,
-  naam: string,
-  navigatie_naam: string,
-  questions: Question[],
-  thema: number,
-}
+  groepId: number;
+  naam: string;
+  navigatieNaam: string;
+  questions: Question[];
+  thema: number;
+};
+
+export type Message = {
+  code: string;
+  type: string;
+  message: string;
+};
 
 export type Error = {
-  check?: string,
-  server?: string,
-  login?: string,
-}
+  check?: string;
+  server?: string;
+  login?: string;
+};
 
 export type State = {
-  theme: number,
-  waiting: boolean,
-  isLoggedIn: boolean,
-  passwordSent: boolean,
-  isRegistered: boolean,
-  message?: string,
-  user?: User,
-  hasLoaded: boolean,
-  isSaving?: number,
-  groups?: Group[],
-  themedGroups: Group[],
-  error: Error,
-}
+  theme: number;
+  waiting: boolean;
+  isLoggedIn: boolean;
+  passwordSent: boolean;
+  isRegistered: boolean;
+  message?: Message;
+  user?: User;
+  hasLoaded: boolean;
+  isSaving?: number;
+  groups?: Group[];
+  themedGroups: Group[];
+  error: Error;
+  externalUrl?: string;
+};
 
 export const state: State = {
   waiting: false,
@@ -96,7 +103,5 @@ export const state: State = {
   hasLoaded: false,
   theme: 1,
   error: {},
-  themedGroups: derived((state: State) => {
-    return state.groups ? Object.values(state.groups).filter((item: any) => item.thema === state.theme) : [];
-  }),
+  themedGroups: derived((thisstate: State) => (thisstate.groups ? Object.values(thisstate.groups).filter((item: any) => item.thema === thisstate.theme) : [])),
 };

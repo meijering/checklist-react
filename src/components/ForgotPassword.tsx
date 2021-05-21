@@ -1,5 +1,11 @@
 /* eslint-disable no-unused-vars, react/jsx-curly-brace-presence */
-import React, { useState, FormEvent, MouseEvent } from 'react';
+// tslint:disable: jsx-boolean-value
+import React, {
+  useState,
+  FormEvent,
+  MouseEvent,
+  Fragment,
+} from 'react';
 
 import Button from '@material-ui/core/Button';
 import TextField from '@material-ui/core/TextField';
@@ -20,7 +26,7 @@ const But = styled.span`
 const ForgotPassword: React.FC = () => {
   const { state, actions }: any = useOvermind();
   const [openForgotPassword, setOpenForgotPassword] = useState(false);
-  const [error, setError] = useState('');
+  const [error] = useState('');
   const [forgotData, setForgotData] = useState('');
 
   const onChange = (e: FormEvent<HTMLInputElement>): void => {
@@ -46,7 +52,7 @@ const ForgotPassword: React.FC = () => {
   };
 
   return (
-    <React.Fragment>
+    <Fragment>
       <But
         onClick={handleClickOpen}
       >
@@ -63,7 +69,7 @@ const ForgotPassword: React.FC = () => {
         {state.passwordSent ? (
           <React.Fragment>
             <DialogContent>
-              {state.message}
+              {state.message.message}
             </DialogContent>
             <DialogActions>
               <Button onClick={handleClose} color="primary">
@@ -75,19 +81,19 @@ const ForgotPassword: React.FC = () => {
           <React.Fragment>
             <DialogContent>
               <DialogContentText>{error}</DialogContentText>
-                  <TextField
-                    autoFocus
-                    margin="dense"
-                    id="name"
-                    name="email"
-                    label="E-mailadres"
-                    type="email"
-                    value={forgotData}
-                    inputProps={{
-                      onChange,
-                    }}
-                    fullWidth
-                  />
+              <TextField
+                autoFocus
+                margin="dense"
+                id="name"
+                name="email"
+                label="E-mailadres"
+                type="email"
+                value={forgotData}
+                inputProps={{
+                  onChange,
+                }}
+                fullWidth
+              />
             </DialogContent>
             <DialogActions>
               <Button onClick={validateAndSendData} color="primary">
@@ -100,7 +106,7 @@ const ForgotPassword: React.FC = () => {
           </React.Fragment>
         )}
       </Dialog>
-    </React.Fragment>
+    </Fragment>
   );
 };
 
