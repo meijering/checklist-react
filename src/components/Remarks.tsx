@@ -1,7 +1,7 @@
 import React from 'react';
-import { arrayOf, shape } from 'prop-types';
 import styled from 'styled-components';
 import { TextField } from '@material-ui/core';
+import { Remark } from '../overmind/state';
 
 const Item = styled.div`
   display: flex;
@@ -11,9 +11,8 @@ const Label = styled.div`
   width: 100px;
 `;
 
-const convertDate = (d) => {
+const convertDate = (d?: Date | null) => {
   const date = d ? new Date(d) : new Date();
-  // console.log(d.getDate());
   return (
     [
       `00${date.getDate()}`.slice(-2),
@@ -22,11 +21,15 @@ const convertDate = (d) => {
     ].join('-'));
 };
 
-const Remarks = ({ remarks }) => (
+interface RemarkProps {
+  remarks: Remark[];
+}
+
+const Remarks: React.FC<RemarkProps> = ({ remarks }: RemarkProps) => (
   <React.Fragment>
     {remarks.map(remark => (
-      <Item key={`remark-${remark.opmerking_id}`}>
-        <Label>{convertDate(remark.ingevoerd_op)}</Label>
+      <Item key={`remark-${remark.opmerkingId}`}>
+        <Label>{convertDate(remark.ingevoerdOp)}</Label>
         {remark.opmerking}
       </Item>
     ))}
@@ -36,9 +39,5 @@ const Remarks = ({ remarks }) => (
     </Item>
   </React.Fragment>
 );
-
-Remarks.propTypes = {
-  remarks: arrayOf(shape()).isRequired,
-};
 
 export default Remarks;

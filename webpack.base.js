@@ -1,9 +1,9 @@
 /* eslint-disable import/no-extraneous-dependencies */
 const path = require('path');
 const webpack = require('webpack');
-const WebpackCleanupPlugin = require('webpack-cleanup-plugin');
-const WebappWebpackPlugin = require('webapp-webpack-plugin');
-const CompressionPlugin = require('compression-webpack-plugin');
+// const WebpackCleanupPlugin = require('webpack-cleanup-plugin');
+// const WebappWebpackPlugin = require('webapp-webpack-plugin');
+// const CompressionPlugin = require('compression-webpack-plugin');
 const TerserPlugin = require('terser-webpack-plugin');
 const WorkboxPlugin = require('workbox-webpack-plugin');
 
@@ -17,7 +17,7 @@ module.exports = (env, options = {}) => ({
     path: path.resolve(__dirname, './dist'),
     filename: '[name]-[hash]-bundle.js',
     chunkFilename: '[name]-[hash]-bundle.js',
-    publicPath: '/v2/',
+    publicPath: '/',
   },
   mode: options.mode || 'development',
   devtool: options.devtool || 'inline-source-map',
@@ -53,11 +53,11 @@ module.exports = (env, options = {}) => ({
     ],
   },
   plugins: [
-    new WebpackCleanupPlugin(),
-    new CompressionPlugin(),
+    // new WebpackCleanupPlugin(),
+    // new CompressionPlugin(),
     new webpack.DefinePlugin({
       'process.env.MODE': JSON.stringify(env.MODE),
-      _API_: env.MODE === 'development' ? '\'http://localhost:3000\'' : '\'https://dgg-checklist.herokuapp.com\'',
+      _API_: env.MODE === 'devellopment' ? '\'http://localhost:3000\'' : '\'https://dgg-checklist.herokuapp.com\'',
     }),
     new webpack.HotModuleReplacementPlugin(),
     new HtmlWebpackPlugin({
@@ -65,19 +65,28 @@ module.exports = (env, options = {}) => ({
       filename: 'index.html',
       inject: 'body',
     }),
-    new WebappWebpackPlugin({
-      logo: './src/assets/logo-max.png',
-      favicons: {
-        lang: 'nl-NL',
-        start_url: '/v2/index.html',
-        background_color: '#9de0ad',
-        theme_color: '#008025',
-      },
+    // new WebappWebpackPlugin({
+    //   logo: './src/assets/logo-max.png',
+    //   favicons: {
+    //     lang: 'nl-NL',
+    //     start_url: '/index.html',
+    //     background_color: '#9de0ad',
+    //     theme_color: '#008025',
+    //   },
     }),
     new WorkboxPlugin.GenerateSW(),
   ],
   module: {
     rules: [
+      {
+        test: /\.ts(x?)$/,
+        exclude: /node_modules/,
+        use: [
+          {
+            loader: 'ts-loader',
+          },
+        ],
+      },
       {
         test: /\.js$/,
         exclude: [
@@ -153,6 +162,7 @@ module.exports = (env, options = {}) => ({
     ],
   },
   resolve: {
+    extensions: ['.tsx', '.ts', '.js'],
     modules: ['src', 'node_modules'],
     alias: {
       ...(options.resolve ? options.resolve.alias : {}),

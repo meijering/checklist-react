@@ -1,5 +1,4 @@
-import React, { useState, useEffect } from 'react';
-import PropTypes from 'prop-types';
+import React, { useState, ChangeEvent } from 'react';
 import styled from 'styled-components';
 import Checkbox from '@material-ui/core/Checkbox';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
@@ -12,6 +11,8 @@ import { ic_comment } from 'react-icons-kit/md/ic_comment';
 import AnimateHeight from 'react-animate-height';
 import ScaleLoader from 'react-spinners/ScaleLoader';
 
+import { useOvermind } from '../overmind';
+import { Question } from '../overmind/state';
 import { media } from '../utils/media';
 import Remarks from './Remarks';
 
@@ -76,39 +77,39 @@ const Navigator = styled.div`
   flex-direction: column;
   align-items: center;
 `;
+
 const InfoContent = styled.div`
   flex: 0 0 90%;
 `;
 
-const setLastAnswer = question => (question.answers
-  ? question.answers.sort((a, b) => new Date(b.ingevoerd_op) - new Date(a.ingevoerd_op))
-    .map(a => a.antwoord)[0]
+const setLastAnswer = (question: Question) => (question.answers
+  ? question.answers.map(a => a.antwoord)[0]
   : '');
 
-const Question = ({ question, saveAnswer, showDetail }) => {
+interface QuestionProps {
+  question: Question;
+  showDetail?: boolean;
+}
+
+const QuestionEl: React.FC<QuestionProps> = ({ question, showDetail = false }: QuestionProps) => {
+  const { state, actions }: any = useOvermind();
   const [more, setMore] = useState(setLastAnswer(question));
-  const [inProgress, setInProgress] = useState(false);
-  useEffect(() => {
-    setInProgress(false);
-  }, [question]);
 
   const lastAnswer = question.answers
-    ? question.answers.sort((a, b) => new Date(b.ingevoerd_op) - new Date(a.ingevoerd_op))
-      .map(a => a.antwoord)[0] === '1'
+    ? question.answers.map(a => a.antwoord)[0] === '1'
     : false;
 
-  const onChange = (e) => {
-    setMore(e.target.value);
+  const onChange = (e: ChangeEvent<HTMLInputElement>): void => {
+    setMore(e.currentTarget.value);
   };
 
   const saveCheck = () => {
-    setInProgress(true);
-    saveAnswer(question.vraag_id, lastAnswer ? '' : '1');
+    actions.saveAnswer({ question: question.vraagId, answer: lastAnswer ? '' : '1' });
   };
 
   const saveThis = () => {
     if (more !== setLastAnswer(question)) {
-      saveAnswer(question.vraag_id, more);
+      actions.saveAnswer({ question: question.vraagId, answer: more });
     }
   };
 
@@ -116,32 +117,30 @@ const Question = ({ question, saveAnswer, showDetail }) => {
   return (
     <React.Fragment>
       <Bar>
-      {question.type === 'checkbox' && (
-        <QuestionBox>
-          <Loader>
-            <ScaleLoader
-              widthUnit="px"
-              heightUnit="px"
-              width={3}
-              height={24}
-              margin="2px"
-              color="#008025"
-              loading={inProgress}
-            />
-          </Loader>
-          <FormControlLabel
-            control={(
-              <Check
-                checked={lastAnswer}
-                onChange={() => saveCheck()}
-                value="1"
-                disabled={inProgress}
+        {question.type === 'checkbox' && (
+          <QuestionBox>
+            <Loader>
+              <ScaleLoader
+                width={3}
+                height={24}
+                margin="2px"
+                color="#008025"
+                loading={state.isSaving === question.vraagId}
               />
+            </Loader>
+            <FormControlLabel
+              control={(
+                <Check
+                  checked={lastAnswer}
+                  onChange={() => saveCheck()}
+                  value="1"
+                  disabled={!!state.isSaving}
+                />
               )}
-            label={question.vraag}
-          />
-        </QuestionBox>
-      )}
+              label={question.vraag}
+            />
+          </QuestionBox>
+        )}
       </Bar>
       {(question.tips || question.remarks) && (
         <QuestionInfo
@@ -151,11 +150,11 @@ const Question = ({ question, saveAnswer, showDetail }) => {
         >
           <InfoContainer>
             <Navigator>
-            <Icon size="20" icon={ic_lightbulb_outline} />
-            <Icon size="16" icon={ic_comment} />
+              <Icon size="20" icon={ic_lightbulb_outline} />
+              <Icon size="16" icon={ic_comment} />
             </Navigator>
             <InfoContent>
-              {question.tips.map(tip => <Tip key={`tip-${tip.tip_id}`} dangerouslySetInnerHTML={{ __html: tip.tip }} />)}
+              {question.tips.map(tip => <Tip key={`tip-${tip.tipId}`} dangerouslySetInnerHTML={{ __html: tip.tip }} />)}
               <Remarks remarks={question.remarks} />
             </InfoContent>
           </InfoContainer>
@@ -168,14 +167,4 @@ const Question = ({ question, saveAnswer, showDetail }) => {
   );
 };
 
-Question.propTypes = {
-  question: PropTypes.shape().isRequired,
-  saveAnswer: PropTypes.func.isRequired,
-  showDetail: PropTypes.bool,
-};
-
-Question.defaultProps = {
-  showDetail: false,
-};
-
-export default Question;
+export default QuestionEl;

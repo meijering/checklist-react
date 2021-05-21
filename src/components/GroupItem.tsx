@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import PropTypes from 'prop-types';
+/* eslint-disable no-mixed-operators, space-infix-ops */
+import React, { ReactNode, useState } from 'react';
 import styled from 'styled-components';
 import { Progress } from 'react-sweet-progress';
 import AnimateHeight from 'react-animate-height';
@@ -51,21 +51,20 @@ export const Group = styled.div`
   .react-sweet-progress-circle-outer {
     position: relative;
     display: inline-block;
-    vertical-align: middle; 
+    vertical-align: middle;
   }
   .react-sweet-progress-line {
     width: 100%;
     border-radius: 100px;
     background-color: #efefef;
-    vertical-align: middle; 
+    vertical-align: middle;
   }
   .react-sweet-progress-line-inner {
     position: relative;
     min-height: 10px;
     border-radius: 100px;
-    transition: width 0.3s ease; 
+    transition: width 0.3s ease;
   }
-
   .react-sweet-progress-line-inner-status-active:before {
     position: absolute;
     top: 0;
@@ -76,7 +75,7 @@ export const Group = styled.div`
     background: #fff;
     animation: active-anim 2s cubic-bezier(0.25, 1, 0.6, 1) infinite;
     content: "";
-    opacity: 0; 
+    opacity: 0;
   }
 
   @keyframes active-anim {
@@ -110,20 +109,13 @@ export const GroupBar = styled.div`
   align-content: center;
   cursor: pointer;
 `;
+interface MyProps {
+  toggled: boolean;
+}
 
-export const Button = styled(ChevronLeft)`
-  &.closed {
-    transform: rotateZ(-90deg);
-    transition: all 0.4s ease;
-    width: 40px;
-    height: 40px;
-  }
-  &.opened {
-    transform: rotateZ(90deg);
-    transition: all 0.4s ease;
-    width: 40px;
-    height: 40px;
-  }
+export const Toggle = styled.div<MyProps>`
+  transition: all 0.4s ease;
+  transform: rotateZ(${({ toggled }) => (toggled ? '-' : '')}90deg);
 `;
 
 export const Div = styled.div`
@@ -132,17 +124,20 @@ export const Div = styled.div`
   align-items: center;
   align-content: flex-start;
 `;
+
 export const QuestionContainer = styled(AnimateHeight)`
   max-width: 1000px;
   background-color: #fdfdfd;
   text-align: left;
   margin: 6px auto;
 `;
+
 export const Name = styled.span`
   font-weight: bold;
   font-size: 18px;
   margin: 0 0.5em;
 `;
+
 export const Nmbr = styled.span`
   color: #222;
 `;
@@ -155,11 +150,20 @@ const progressTheme = () => {
   return colors.map((color, idx) => ({ [`percent${idx}`]: { color } }))
     .reduce((acc, curr) => ({ ...acc, ...curr }), {});
 };
+interface Prop {
+  id: number;
+  name: string;
+  nmbrOfQuestions: number;
+  nmbrOfAnswers: number;
+  toggleActive: (item: number, value: boolean) => void;
+  children?: ReactNode;
+}
 
-const GroupItem = ({
+const GroupItem: React.FC<Prop> = ({
   id, name, toggleActive, nmbrOfQuestions, nmbrOfAnswers, children,
-}) => {
+}: Prop) => {
   const [questionsToggled, setQuestionsToggled] = useState(true);
+  const percent = Math.round((nmbrOfAnswers / nmbrOfQuestions) * 100);
 
   const toggleQuestions = () => {
     setQuestionsToggled(!questionsToggled);
@@ -167,13 +171,11 @@ const GroupItem = ({
   };
 
   const colorSwitch = () => {
-    const percent = parseInt((nmbrOfAnswers / nmbrOfQuestions) * 100, 10);
     if (percent === 0) return 'error';
     if (percent === 100) return 'success';
     return `percent${percent}`;
   };
 
-  const percent = parseInt((nmbrOfAnswers / nmbrOfQuestions) * 100, 10);
   return (
     <Group>
       <GroupBar onClick={toggleQuestions}>
@@ -199,7 +201,9 @@ const GroupItem = ({
           <Name>{name}</Name>
           <Nmbr>{`(${nmbrOfQuestions})`}</Nmbr>
         </Div>
-        <Button className={questionsToggled ? 'closed' : 'opened'} />
+        <Toggle toggled={questionsToggled}>
+          <ChevronLeft style={{ width: '40px', height: '40px' }} />
+        </Toggle>
       </GroupBar>
       <QuestionContainer
         duration={300}
@@ -210,18 +214,6 @@ const GroupItem = ({
       </QuestionContainer>
     </Group>
   );
-};
-
-GroupItem.propTypes = {
-  id: PropTypes.string.isRequired,
-  name: PropTypes.string.isRequired,
-  nmbrOfQuestions: PropTypes.number.isRequired,
-  nmbrOfAnswers: PropTypes.number.isRequired,
-  toggleActive: PropTypes.func.isRequired,
-  children: PropTypes.oneOfType([
-    PropTypes.arrayOf(PropTypes.node),
-    PropTypes.node,
-  ]).isRequired,
 };
 
 export default GroupItem;

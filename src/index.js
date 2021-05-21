@@ -1,19 +1,18 @@
-import '@babel/polyfill';
-import React from 'react';
-import ReactDOM from 'react-dom';
-import { Provider } from 'react-redux';
-import { MuiThemeProvider, createMuiTheme } from '@material-ui/core/styles';
-import configureStore from './configureStore';
-import App from './App/App'; // eslint-disable-line import/no-named-as-default
-import StoreContext from './utils/storeContext';
-
-
+import 'core-js/stable';
+import 'regenerator-runtime/runtime';
+import * as React from 'react';
+import * as ReactDOM from 'react-dom';
+import { Router } from '@reach/router';
+import { createOvermind } from 'overmind';
+import { Provider } from 'overmind-react';
+import { ThemeProvider, createMuiTheme } from '@material-ui/core/styles';
+import App from './App/App';
+import ResetPassword from './components/ResetPassword';
+import RegisterDone from './components/done';
+import { config } from './overmind';
 // The initial state of the App
-const initialState = {};
-
-const store = configureStore(initialState);
 const breakpointValues = {
-  // keep first breakpoint at zero instead of 322px, see spec material ui breakpoints at https://github.com/mui-org/material-ui/blob/master/packages/material-ui/src/styles/createBreakpoints.js
+  // keep first breakpoint at zero instead of 322px
   xs: 0,
   sm: 544,
   md: 768,
@@ -22,11 +21,11 @@ const breakpointValues = {
 };
 
 const gridAdjustments = createMuiTheme({
-  typography: {
-    useNextVariants: true,
-  },
+  // typography: {
+  //   useNextVariants: true,
+  // },
   breakpoints: { values: breakpointValues },
-  spacing: { unit: 15 },
+  // spacing: { unit: 15 },
   palette: {
     primary: {
       main: '#008025',
@@ -36,17 +35,21 @@ const gridAdjustments = createMuiTheme({
     },
     // error: will use the default color
   },
-
 });
+
+const overmind = createOvermind(config, { devtools: 'localhost:3002' });
+
 const MOUNT_NODE = document.getElementById('root');
 ReactDOM.render(
-  <MuiThemeProvider theme={gridAdjustments}>
-    <Provider store={store}>
-      <StoreContext.Provider value={store}>
-        <App />
-      </StoreContext.Provider>
-    </Provider>
-  </MuiThemeProvider>,
+  <Provider value={overmind}>
+    <ThemeProvider theme={gridAdjustments}>
+      <Router>
+        <App path="/" />
+        <RegisterDone path="/geregistreerd" />
+        <ResetPassword path="/reset/:userId/:token" />
+      </Router>
+    </ThemeProvider>
+  </Provider>,
   MOUNT_NODE,
 );
 // registerServiceWorker();

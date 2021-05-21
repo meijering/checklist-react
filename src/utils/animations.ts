@@ -2,19 +2,19 @@ import { keyframes } from 'styled-components';
 
 export const teaserFadeInOut = keyframes`
   0% {
-    opacity: 0; 
+    opacity: 0;
     transform: translateY(14px);
   }
   30% {
-    opacity: 1; 
+    opacity: 1;
     transform: translateY(7px);
   }
   50% {
-    opacity: 1; 
+    opacity: 1;
     transform: translateY(7px);
   }
   70% {
-    opacity: 1; 
+    opacity: 1;
     transform: translateY(7px);
   }
   100% {
@@ -60,17 +60,32 @@ export const bounce = keyframes`
     transform: translateY(-5px);
   }
 `;
-
-export const scrollToY = (scrollTargetY = 0, speed = 2000, easing = 'easeOutSine') => {
-  // scrollTargetY: the target scrollY property of the window
-  // speed: time in pixels per second
-  // easing: easing equation to use
+/**
+ * scrollTargetY: the target scrollY property of the window
+ * speed: time in pixels per second
+ * easing: easing equation to use
+ */
+enum EasingProp {
+  easeOutSine = 'EaseOutSine',
+  easeInOutSine = 'EaseInOutSine',
+  easeInOutQuint = 'EaseInOutQuint',
+}
+interface IColorType {
+  dataType: number | null;
+  value: string;
+}
+export const scrollToY = (scrollTargetY = 0, speed = 2000, easing = EasingProp.easeOutSine) => {
   let currentTime = 0;
   const time = Math.max(0.1, Math.min(Math.abs(window.scrollY - scrollTargetY) / speed, 0.8));
 
   // easing equations from https://github.com/danro/easing-js/blob/master/easing.js
   // const PI_D2 = Math.PI / 2;
-  const easingEquations = {
+  interface IEasingEq {
+    easeOutSine: (p: number) => number;
+    easeInOutSine: (p: number) => number;
+    easeInOutQuint: (p: number) => number;
+  }
+  const easingEquations: IEasingEq = {
     easeOutSine: pos => Math.sin(pos * (Math.PI / 2)),
     easeInOutSine: pos => (-0.5 * (Math.cos(Math.PI * pos) - 1)),
     easeInOutQuint: pos => (
@@ -114,7 +129,7 @@ const RGBA = 3;
 
 // get the string representation
 // type and set it on the element (HEX/RGB/RGBA)
-const getColorType = (val) => {
+const getColorType = (val: string) => {
   if (val.indexOf('#') > -1) return HEX;
   if (val.indexOf('rgb(') > -1) return RGB;
   if (val.indexOf('rgba(') > -1) return RGBA;
@@ -122,7 +137,7 @@ const getColorType = (val) => {
 };
 
 // return a workable RGB int array [r,g,b] from hex representation
-const processHEX = (val) => {
+const processHEX = (val: string) => {
   // does the hex contain extra char?
   const hex = (val.length > 6) ? val.substr(1, val.length - 1) : val;
   // is it a six character hex?
@@ -141,7 +156,7 @@ const processHEX = (val) => {
 };
 
 // return a workable RGB int array [r,g,b] from rgb/rgba representation
-const processRGB = (val) => {
+const processRGB = (val: string) => {
   const rgb = val.split('(')[1].split(')')[0].split(',');
   return [
     parseInt(rgb[0], 10),
@@ -151,27 +166,23 @@ const processRGB = (val) => {
 };
 
 // process the value irrespective of representation type
-const processValue = (el) => {
+const processValue = (el: IColorType) => {
   switch (el.dataType) {
-    case HEX:
-      return processHEX(el.value);
-    case RGB:
-      return processRGB(el.value);
-    case RGBA:
-      return processRGB(el.value);
-    default:
-      return null;
+  case HEX:
+    return processHEX(el.value);
+  case RGB:
+    return processRGB(el.value);
+  case RGBA:
+    return processRGB(el.value);
+  default:
+    return null;
   }
 };
 
-const pad = (n, width, z) => {
-  const zn = z || '0';
-  const nn = `${n}`;
-  return nn.length >= width ? nn : new Array(width - nn.length + 1).join(zn) + nn;
-};
+const pad = (nn: string, width: number, zn: string = '0'): string => (nn.length >= width ? nn : new Array(width - nn.length + 1).join(zn) + nn);
 
-export const findColors = (startColor, endColor, steps) => {
-// elements for obtaining vals
+export const findColors = (startColor: string, endColor: string, steps: number) => {
+  // elements for obtaining vals
   // attach start value
   const startWith = {
     dataType: getColorType(startColor),
@@ -181,8 +192,8 @@ export const findColors = (startColor, endColor, steps) => {
     dataType: getColorType(endColor),
     value: endColor,
   };
-  const val1RGB = processValue(startWith);
-  const val2RGB = processValue(endWith);
+  const val1RGB = processValue(startWith) || [0, 0, 0];
+  const val2RGB = processValue(endWith) || [0, 0, 0];
 
   // the percentage representation of the step
   const stepsPerc = 100 / (steps + 1);
@@ -195,6 +206,7 @@ export const findColors = (startColor, endColor, steps) => {
   ];
 
   // build the color array out with color steps
+  // tslint:disable: align
 
   return [...Array(steps)].map((s, i) => [
     '#',
