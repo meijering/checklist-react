@@ -1,0 +1,7 @@
+{
+  "name": "de Groene Giraf Checklist",
+  "integrations": {
+    "capacitor": {}
+  },
+  "type": "react"
+}

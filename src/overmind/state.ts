@@ -12,7 +12,7 @@ export type RegisterData = {
 };
 
 export type PasswordData = {
-  userId: string;
+  gebruikerId: string;
   password: string;
   token: string;
 };
@@ -80,6 +80,7 @@ export type Error = {
 };
 
 export type State = {
+  pageTitle: string;
   theme: number;
   waiting: boolean;
   isLoggedIn: boolean;
@@ -87,6 +88,8 @@ export type State = {
   isRegistered: boolean;
   message?: Message;
   user?: User;
+  users?: User[];
+  questions?: Question[];
   hasLoaded: boolean;
   isSaving?: number;
   groups?: Group[];
@@ -96,6 +99,7 @@ export type State = {
 };
 
 export const state: State = {
+  pageTitle: 'Alle vragen',
   waiting: false,
   passwordSent: false,
   isLoggedIn: false,
@@ -103,5 +107,7 @@ export const state: State = {
   hasLoaded: false,
   theme: 1,
   error: {},
+  users: [],
+  questions: [],
   themedGroups: derived((thisstate: State) => (thisstate.groups ? Object.values(thisstate.groups).filter((item: any) => item.thema === thisstate.theme) : [])),
 };

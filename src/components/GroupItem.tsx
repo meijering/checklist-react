@@ -4,7 +4,7 @@ import styled from 'styled-components';
 import { Progress } from 'react-sweet-progress';
 import AnimateHeight from 'react-animate-height';
 import ChevronLeft from '@material-ui/icons/ChevronLeft';
-import { media } from '../utils/media';
+import { breaks } from '../utils/media';
 import { findColors } from '../utils/animations';
 
 export const Group = styled.div`
@@ -96,9 +96,9 @@ export const Group = styled.div`
     stroke-linecap: round;
   }
 
-  ${media.phone`
+  ${breaks.phone} {
     border-radius: 0px;
-  `}
+  }
 `;
 
 export const GroupBar = styled.div`
@@ -155,7 +155,7 @@ interface Prop {
   name: string;
   nmbrOfQuestions: number;
   nmbrOfAnswers: number;
-  toggleActive: (item: number, value: boolean) => void;
+  toggleActive?: (item: number, value: boolean) => void;
   children?: ReactNode;
 }
 
@@ -166,8 +166,10 @@ const GroupItem: React.FC<Prop> = ({
   const percent = Math.round((nmbrOfAnswers / nmbrOfQuestions) * 100);
 
   const toggleQuestions = () => {
-    setQuestionsToggled(!questionsToggled);
-    toggleActive(id, !questionsToggled);
+    if (toggleActive) {
+      setQuestionsToggled(!questionsToggled);
+      toggleActive(id, !questionsToggled);
+    }
   };
 
   const colorSwitch = () => {
@@ -201,14 +203,16 @@ const GroupItem: React.FC<Prop> = ({
           <Name>{name}</Name>
           <Nmbr>{`(${nmbrOfQuestions})`}</Nmbr>
         </Div>
-        <Toggle toggled={questionsToggled}>
-          <ChevronLeft style={{ width: '40px', height: '40px' }} />
-        </Toggle>
+        {toggleActive &&
+          <Toggle toggled={questionsToggled}>
+            <ChevronLeft style={{ width: '40px', height: '40px' }} />
+          </Toggle>
+        }
       </GroupBar>
       <QuestionContainer
         duration={300}
         animateOpacity
-        height={questionsToggled ? 0 : 'auto'}
+        height={toggleActive && questionsToggled ? 0 : 'auto'}
       >
         {children}
       </QuestionContainer>

@@ -7,6 +7,9 @@
   "dependencies": {
     "@babel/polyfill": "^7.4.4",
     "@babel/register": "^7.13.16",
+    "@capacitor/android": "3.0.0",
+    "@capacitor/cli": "^3.0.0",
+    "@capacitor/core": "^3.0.0",
     "@emotion/core": "^11.0.0",
     "@material-ui/core": "^4.11.4",
     "@material-ui/icons": "^4.11.2",
@@ -15,6 +18,7 @@
     "babel-preset-react-app": "^10.0.0",
     "core-js": "^3.8.1",
     "fast-deep-equal": "^2.0.1",
+    "formik": "^2.2.9",
     "history": "^4.9.0",
     "hoist-non-react-statics": "^3.3.0",
     "http-server": "^0.12.3",
@@ -29,6 +33,7 @@
     "react": "^16.8.6",
     "react-anchor-link-smooth-scroll": "^1.0.12",
     "react-animate-height": "^2.0.9",
+    "react-autosuggest": "^10.1.0",
     "react-dom": "^16.8.6",
     "react-helmet": "^5.2.1",
     "react-icons-kit": "^1.3.1",
@@ -58,7 +63,8 @@
     "test": "PORT=3002 REACT_APP_API=https://dgg-checklist.herokuapp.com/api/v0 react-scripts test --env=jsdom",
     "lstart": "PORT=3002 REACT_APP_API=http://localhost:3030/api/v0 react-scripts start",
     "lrstart": "PORT=3002 REACT_APP_API=http://192.168.2.15:3030/api/v0 react-scripts start",
-    "reject": "react-scripts eject"
+    "reject": "react-scripts eject",
+    "android": "ionic capacitor add android"
   },
   "devDependencies": {
     "@babel/core": "^7.14.0",

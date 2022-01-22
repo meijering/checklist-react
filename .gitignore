@@ -5,10 +5,12 @@
 
 # testing
 /coverage
+/.sonarlint
 
 # production
 /build
 /dist
+/android
 
 # misc
 .DS_Store

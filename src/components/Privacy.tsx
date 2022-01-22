@@ -1,11 +1,12 @@
-import React, { useState } from 'react';
+import React, { FC, useState } from 'react';
 import styled from 'styled-components';
+import FingerprintIcon from '@material-ui/icons/Fingerprint';
 
 import Dialog from '@material-ui/core/Dialog';
 import AppBar from '@material-ui/core/AppBar';
 import CloseIcon from '@material-ui/icons/Close';
 import IconButton from '@material-ui/core/IconButton';
-import { media } from '../utils/media';
+import { breaks } from '../utils/media';
 
 const Content = styled.div`
   max-width: 1000px;
@@ -24,10 +25,11 @@ const Toolbar = styled.div`
 `;
 const A = styled.a`
   cursor: pointer;
-  display: block;
+  display: flex;
+  align-items: center;
   text-align: right;
   max-width: 1000px;
-  margin: 20px auto;
+  margin: 0px auto;
   font-family: sans-serif;
 `;
 const Footer = styled.div`
@@ -35,10 +37,10 @@ const Footer = styled.div`
   width: 100%;
   bottom:0;
   background-color: rgba(255, 255, 255, 0.6);
-  ${media.phone`
+  ${breaks.phone} {
     width: calc(100% - 20px);
     padding-right: 20px;
-  `}`;
+  }`;
 
 const Title = styled.div`
   display: flex;
@@ -47,10 +49,10 @@ const Title = styled.div`
   font-variant: small-caps;
   font-size: 25px;
   font-family: sans-serif;
-  ${media.phone`
+  ${breaks.phone} {
     font-size: 15px;
     padding-left: 20px;
-  `}
+  }
 `;
 
 const List = styled.ol`
@@ -60,10 +62,10 @@ const List = styled.ol`
   & li {
     padding-top:20px;
   }
-  ${media.phone`
+  ${breaks.phone} {
     padding-left: 40px;
     padding-right: 40px;
-  `}
+  }
 `;
 const Foot = styled.div`
   padding: 20px 0px 20px 20px;
@@ -71,35 +73,36 @@ const Foot = styled.div`
     margin-left: 0.5em;
   }
 `;
-
-const Privacy: React.FC = () => {
+interface IPrivacy {
+  handleClose: () => void;
+}
+const Privacy: FC<IPrivacy> = ({ handleClose }: IPrivacy) => {
   const [openPrivacy, setOpenPrivacy] = useState(false);
 
   const handleClickOpen = () => {
     setOpenPrivacy(true);
   };
 
-  const handleClose = () => {
+  const closeMe = () => {
+    handleClose();
     setOpenPrivacy(false);
   };
 
   return (
     <React.Fragment>
-      <Footer>
-        <A onClick={handleClickOpen}>
-          Privacyverklaring
-        </A>
-      </Footer>
+      <A onClick={handleClickOpen}>
+        <FingerprintIcon /> Privacyverklaring
+      </A>
       <Dialog
         fullScreen
         open={openPrivacy}
-        onClose={handleClose}
+        onClose={closeMe}
         aria-labelledby="register"
       >
         <AppBar>
           <Toolbar>
             <Title id="register">Privacy statement en cookie beleid van de Groene Giraf</Title>
-            <IconButton color="inherit" onClick={handleClose} aria-label="close">
+            <IconButton color="inherit" onClick={closeMe} aria-label="close">
               <CloseIcon />
             </IconButton>
           </Toolbar>

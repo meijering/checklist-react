@@ -7,8 +7,6 @@ import { createOvermind } from 'overmind';
 import { Provider } from 'overmind-react';
 import { ThemeProvider, createMuiTheme } from '@material-ui/core/styles';
 import App from './App/App';
-import ResetPassword from './components/ResetPassword';
-import RegisterDone from './components/done';
 import { config } from './overmind';
 // The initial state of the App
 const breakpointValues = {
@@ -44,12 +42,9 @@ ReactDOM.render(
   <Provider value={overmind}>
     <ThemeProvider theme={gridAdjustments}>
       <Router>
-        <App path="/" />
-        <RegisterDone path="/geregistreerd" />
-        <ResetPassword path="/reset/:userId/:token" />
+        <App path="/*" />
       </Router>
     </ThemeProvider>
   </Provider>,
   MOUNT_NODE,
 );
-// registerServiceWorker();

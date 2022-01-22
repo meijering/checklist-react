@@ -1,7 +1,9 @@
-import React, { useState, ChangeEvent } from 'react';
+import React, { FC, useState, ChangeEvent } from 'react';
 import styled from 'styled-components';
 import Checkbox from '@material-ui/core/Checkbox';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
+import Slider from '@material-ui/core/Slider';
+import Switch from '@material-ui/core/Switch';
 import { TextField } from '@material-ui/core';
 import { Icon } from 'react-icons-kit';
 /* eslint-disable camelcase */
@@ -13,7 +15,7 @@ import ScaleLoader from 'react-spinners/ScaleLoader';
 
 import { useOvermind } from '../overmind';
 import { Question } from '../overmind/state';
-import { media } from '../utils/media';
+import { breaks } from '../utils/media';
 import Remarks from './Remarks';
 
 const Loader = styled.div`
@@ -30,9 +32,9 @@ const Bar = styled.div`
   align-items: center;
   padding: 6px 0;
   height: 40px;
-  ${media.phone`
+  ${breaks.phone} {
     height: auto;
-  `}
+  }
 `;
 
 const Check = styled(Checkbox)`
@@ -52,13 +54,14 @@ const QuestionBox = styled.div`
   align-items: center;
   & span {
     font-size: 18px;
+    line-height: 1.2;
   }
 `;
 
 export const QuestionInfo = styled(AnimateHeight)`
-  ${media.phone`
+  ${breaks.phone} {
     display: none;
-  `}
+  }
 `;
 
 const InfoContainer = styled.div`
@@ -86,12 +89,12 @@ const setLastAnswer = (question: Question) => (question.answers
   ? question.answers.map(a => a.antwoord)[0]
   : '');
 
-interface QuestionProps {
+interface IQuestionProps {
   question: Question;
   showDetail?: boolean;
 }
 
-const QuestionEl: React.FC<QuestionProps> = ({ question, showDetail = false }: QuestionProps) => {
+const QuestionEl: FC<IQuestionProps> = ({ question, showDetail = false }: IQuestionProps) => {
   const { state, actions }: any = useOvermind();
   const [more, setMore] = useState(setLastAnswer(question));
 
@@ -155,7 +158,7 @@ const QuestionEl: React.FC<QuestionProps> = ({ question, showDetail = false }: Q
             </Navigator>
             <InfoContent>
               {question.tips.map(tip => <Tip key={`tip-${tip.tipId}`} dangerouslySetInnerHTML={{ __html: tip.tip }} />)}
-              <Remarks remarks={question.remarks} />
+              {/* <Remarks remarks={question.remarks} /> */}
             </InfoContent>
           </InfoContainer>
         </QuestionInfo>

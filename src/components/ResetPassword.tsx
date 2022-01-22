@@ -9,10 +9,8 @@ import Card from '@material-ui/core/Card';
 import CardActions from '@material-ui/core/CardActions';
 import CardContent from '@material-ui/core/CardContent';
 import { useOvermind } from '../overmind';
-// import Register from './Register';
-import AppBar from './AppBar';
 import imageElement from '../assets/logo-max.png';
-import { media } from '../utils/media';
+import { breaks } from '../utils/media';
 
 const AppContainer = styled.div`
     position: relative;
@@ -38,7 +36,7 @@ const Content = styled.div`
     padding-left: 0.3em;
     padding-right: 0.3em;
   }
-  ${media.phone`
+  ${breaks.phone} {
     padding: 12px;
     & h1 {
       font-size: 1.5em;
@@ -49,7 +47,7 @@ const Content = styled.div`
     & ul {
       padding-left: 32px;
     }
-  `}
+  }
 `;
 
 const Row = styled.div`
@@ -70,13 +68,12 @@ const Error = styled.div`
 `;
 
 interface IFPProps {
-  userId?: string;
+  gebruikerId?: string;
   token?: string;
 }
 
-const ResetPassword: React.FC<RouteComponentProps<IFPProps>> = ({ userId, token }: IFPProps) => {
+const ResetPassword: React.FC<RouteComponentProps<IFPProps>> = ({ gebruikerId, token }: IFPProps) => {
   const { state, actions }: any = useOvermind();
-  // const registered = '';
 
   const [passwords, setPasswords] = useState({
     password: '',
@@ -93,10 +90,10 @@ const ResetPassword: React.FC<RouteComponentProps<IFPProps>> = ({ userId, token 
 
   const validateAndSendData = (e: MouseEvent): void => {
     e.preventDefault();
-    if (userId && token && passwords.password
+    if (gebruikerId && token && passwords.password
       && passwords.password === passwords.passwordConfirmed) {
       actions.changePassword({
-        userId,
+        gebruikerId,
         password: passwords.password,
         token,
       });
@@ -105,7 +102,6 @@ const ResetPassword: React.FC<RouteComponentProps<IFPProps>> = ({ userId, token 
 
   return (
     <AppContainer>
-      <AppBar />
       <Content>
         <Row>
           <img src={imageElement} alt="logo" />
@@ -114,15 +110,15 @@ const ResetPassword: React.FC<RouteComponentProps<IFPProps>> = ({ userId, token 
           </h1>
         </Row>
         <LoginCard>
-          {state.passwordSent ? (
+          {state.passwordSent && state.message.code !== 'E00' ? (
             <CardContent>
-              {state.message}
+              {state.message.message}
             </CardContent>
           ) : (
             <React.Fragment>
               <CardContent>
                 <Error>
-                  {state.error.login}
+                  {state.message?.message}
                 </Error>
                 <TextField
                   autoFocus

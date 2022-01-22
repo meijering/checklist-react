@@ -3,30 +3,44 @@
  * Homepage page has log in, when logged in we collect all the data:
  * groups, questions, answers, etc. After that we can show the first page
  */
-import * as React from 'react';
-import { useEffect } from 'react';
-import { RouteComponentProps } from '@reach/router';
+import React, { FC, useEffect } from 'react';
+import { Router, RouteComponentProps, useLocation } from '@reach/router';
 import styled from 'styled-components';
 import Card from '@material-ui/core/Card';
+import Container from '@material-ui/core/Container';
+
+import useScrollTrigger from '@material-ui/core/useScrollTrigger';
+import Slide from '@material-ui/core/Slide';
+import { TransitionProps } from '@material-ui/core/transitions';
+
 import CircleLoader from 'react-spinners/CircleLoader';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
 import { useOvermind } from '../overmind';
 import imageElement from '../assets/logo-max.png';
+
+import ResetPassword from '../components/ResetPassword';
+import RegisterDone from '../components/done';
 import Login from '../components/Login';
-import AppBar from '../components/AppBar';
+import MyAppBar from '../components/AppBar';
 import Register from '../components/Register';
-import Privacy from '../components/Privacy';
-import { media } from '../utils/media';
+import { breaks } from '../utils/media';
+import AllGroups from '../components/AllGroups';
+import Groups from '../components/Groups';
+import Users from '../admin/Users';
+import AdminGroups from '../admin/Groups';
+import AdminQuestions from '../admin/Questions';
+import Admin from '../admin';
+import Public from '../components';
 
 const isProd = process.env.NODE_ENV === 'production';
-const Groups = React.lazy(() => import('../components/Groups'));
 
 const AppContainer = styled.div`
     position: relative;
+    padding-top: 5em;
     padding-bottom: 4em;
-    min-height: calc(100vh - 4em);
+    min-height: calc(100vh - 9em);
 `;
 
 const Content = styled.div`
@@ -47,7 +61,7 @@ const Content = styled.div`
     padding-left: 0.3em;
     padding-right: 0.3em;
   }
-  ${media.phone`
+  ${breaks.phone} {
     padding: 12px;
     & h1 {
       font-size: 1.5em;
@@ -58,12 +72,16 @@ const Content = styled.div`
     & ul {
       padding-left: 32px;
     }
-  `}
+  }
 `;
 
 const Row = styled.div`
-  display: flex;
   margin-top: 50px;
+  ${breaks.phone} {
+    & img {
+      display: none;
+    }
+  }
 `;
 
 const Error = styled(Card)`
@@ -79,8 +97,60 @@ const Error = styled(Card)`
     flex: 1 0 auto;
   }
 `;
-const App: React.FC<RouteComponentProps> = () => {
+
+const HideOnScroll =  React.forwardRef(function HideOnScroll(
+  props: TransitionProps & { children?: React.ReactElement<any, any> },
+  ref: React.Ref<unknown>,
+) {
+  const trigger = useScrollTrigger();
+  const { children } = props;
+  return (
+    <Slide appear={false} direction="down" in={!trigger} ref={ref}>
+      {children}
+    </Slide>
+  );
+});
+
+const AppBody: FC = () => {
+  const { state }: any = useOvermind();
+
+  return state.hasLoaded ? (
+    <Login />
+  ) : (
+    <Error>
+      <p>
+        {
+          (state.error && 'server' in state.error && state.error.server) || 'er wordt verbinding gemaakt met de server...'
+        }
+      </p>
+      {!('server' in state.error) && <CircleLoader color="#008025" />}
+    </Error>
+  );
+};
+
+const WelcomeContent: FC<RouteComponentProps> = () => {
+  return (
+    <Content>
+      <Row>
+        <img src={imageElement} alt="logo" />
+        <h1>
+        Welkom
+        </h1>
+      </Row>
+      <Row>
+        {!isProd && <Register />}
+      </Row>
+      <AppBody />
+    </Content>);
+};
+
+const App: FC<RouteComponentProps> = () => {
   const { state, actions }: any = useOvermind();
+  const location = useLocation();
+
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [location.pathname]);
 
   useEffect(() => {
     actions.checkLogin();
@@ -94,39 +164,32 @@ const App: React.FC<RouteComponentProps> = () => {
 
   return (
     <AppContainer>
-      <AppBar />
-      {state.isLoggedIn ? (
-        <React.Suspense fallback={<div />}>
-          <Groups />
-        </React.Suspense>
-      ) : (
-        <Content>
-          <Row>
-            <img src={imageElement} alt="logo" />
-            <h1>
-              Welkom
-            </h1>
-          </Row>
-          <Row>
-            {!isProd && <Register />}
-          </Row>
-          {state.hasLoaded ? (
-            <Login />
+      <MyAppBar />
+      {state.hasLoaded && (
+        <Container>
+          {state.isLoggedIn ? (
+            <Router>
+              <Public path="/">
+                <Groups path="/" default />
+                <AllGroups path="dit-gaat-goed" checked />
+                <AllGroups path="dit-kan-beter" />
+              </Public>
+              <Admin path="/admin">
+                <Users path="gebruikers" />
+                <AdminGroups path="groepen" />
+                <AdminQuestions path="vragen" />
+              </Admin>
+            </Router>
           ) : (
-            <Error>
-              <p>
-                {
-                  (state.error && 'server' in state.error && state.error.server) || 'er wordt verbinding gemaakt met de server...'
-                }
-              </p>
-              {!('server' in state.error) && <CircleLoader color="#008025" />}
-            </Error>
+            <Router>
+              <RegisterDone path="geregistreerd" />
+              <ResetPassword path="reset/:gebruikerId/:token" />
+              <WelcomeContent default />
+            </Router>
           )}
-
-        </Content>
+          <ToastContainer />
+        </Container>
       )}
-      <Privacy />
-      <ToastContainer />
     </AppContainer>
   );
 };

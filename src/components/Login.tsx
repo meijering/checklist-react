@@ -41,8 +41,6 @@ const Login: React.FC = () => {
   }, [JSON.stringify(credentials)]);
 
   const onChange = (e: FormEvent<HTMLInputElement>): void => {
-    // eslint-disable-next-line no-console
-    console.log('in change');
     const safeInputValue: string = e.currentTarget.value;
     setCredentials({
       ...credentials,

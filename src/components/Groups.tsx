@@ -1,11 +1,12 @@
-import React, { useState, useEffect } from 'react';
+import { RouteComponentProps } from '@reach/router';
+import React, { FC, useState, useEffect } from 'react';
 import AnimateHeight from 'react-animate-height';
 import { useOvermind } from '../overmind';
 import { Group, Question } from '../overmind/state';
 import GroupItem from './GroupItem';
 import QuestionEl from './Question';
 
-const Groups: React.FC = () => {
+const Groups: FC<RouteComponentProps> = () => {
   const { state } = useOvermind();
 
   const [currentGroups, setCurrentGroups] = useState<any>(state.themedGroups);
