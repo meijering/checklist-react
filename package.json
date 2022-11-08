@@ -115,7 +115,7 @@
     "intl-locales-supported": "^1.1.0",
     "jest-styled-components": "^7.0.4",
     "lighthouse": "^7.4.0",
-    "loader-utils": "^2.0.0",
+    "loader-utils": "^2.0.3",
     "minimist": "^1.2.5",
     "mocha": "^8.3.2",
     "nyc": "^15.1.0",
